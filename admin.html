@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Daisolve Technologies - Admin Operations Hub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    "error":"#ba1a1a","secondary":"#4f5e7e","primary":"#0052d1","primary-container":"#1769ff",
+    "primary-fixed-dim":"#b3c5ff","outline-variant":"#c2c6d8","price-primary":"#10213D",
+    "surface-canvas":"#FFFFFF","surface-subtle":"#F2F7FF","surface-border":"#E2E8F0","surface-bright":"#f8f9ff",
+    "surface-container-low":"#eff4ff","surface-container-high":"#dce9ff","background":"#f8f9ff",
+    "on-surface":"#0b1c30","success":"#10B981","danger":"#EF4444","mpesa-green":"#43B02A",
+    "tertiary":"#8b4b00","tertiary-fixed":"#ffdcc2","tertiary-container":"#af6000"
+  },
+  spacing: { "margin":"1rem","margin-desktop":"2rem" },
+  fontFamily: { sans:["Inter","system-ui","sans-serif"] }
+}}};
+</script>
+<style>
+  body{font-family:Inter,system-ui,sans-serif}
+  .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+  .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  .lbl{font-size:11px;font-weight:700;letter-spacing:.04em}
+  @media print{body>*:not(#printArea){display:none!important}#printArea{display:block!important}}
+  #printArea{display:none}
+</style>
+<meta name="robots" content="noindex,nofollow"/>
+</head>
+<body class="bg-background text-on-surface antialiased pb-24 md:pb-12 min-h-screen">
+
+<!-- Status banner -->
+<div class="bg-price-primary text-white py-1.5 px-4 md:px-8 text-xs">
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2">
+      <span class="inline-flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
+      <span class="lbl uppercase text-primary-fixed-dim">Admin Portal</span>
+      <span class="hidden sm:inline text-outline-variant">|</span>
+      <span class="hidden sm:inline">Jamia Shopping Mall, Nairobi CBD</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="hidden sm:inline">Pochi: +254 790 835039</span>
+      <span id="clock" class="bg-primary-container px-2 py-0.5 rounded lbl"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="bg-white sticky top-0 z-40 shadow-sm">
+  <div class="w-full max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 h-16">
+    <div class="flex items-center gap-3">
+      <button id="menuBtn" aria-label="Menu" class="p-2 -ml-2 rounded-lg text-price-primary hover:bg-surface-subtle active:scale-95 md:hidden"><span class="material-symbols-outlined">menu</span></button>
+      <a href="/home" class="flex items-center gap-2" aria-label="Daisolve Technologies home"><img src="/logo.png" alt="Daisolve Technologies" width="140" height="108" class="h-11 md:h-12 w-auto block"/><span class="bg-surface-container-low text-primary border border-surface-border lbl px-2 py-0.5 rounded-full hidden sm:inline-block">Operations HQ</span></a>
+    </div>
+    <nav class="hidden md:flex items-center gap-1 text-sm font-semibold">
+      <a class="px-3 py-2 rounded-lg text-primary bg-surface-subtle" href="/admin">Dashboard</a>
+      <a class="px-3 py-2 rounded-lg text-price-primary hover:bg-surface-subtle" href="/home">Storefront</a>
+      <a class="px-3 py-2 rounded-lg text-price-primary hover:bg-surface-subtle" href="/shop">Shop</a>
+      <a class="px-3 py-2 rounded-lg text-price-primary hover:bg-surface-subtle" href="/brands">Brands</a>
+      <a class="px-3 py-2 rounded-lg text-price-primary hover:bg-surface-subtle" href="/blog">Blog</a>
+      <a class="px-3 py-2 rounded-lg text-price-primary hover:bg-surface-subtle" href="/checkout">Checkout</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="/home" target="_blank" class="flex items-center gap-1.5 bg-surface-subtle border border-surface-border hover:bg-surface-container-high text-price-primary px-3 py-1.5 rounded-lg text-xs font-semibold active:scale-95">
+        <span class="material-symbols-outlined text-primary">open_in_new</span><span class="hidden sm:inline">View Store</span>
+      </a>
+      <div class="flex items-center pl-2 border-l border-surface-border gap-2">
+        <div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs">KM</div>
+        <div class="hidden lg:block text-left"><p class="text-xs font-semibold text-price-primary leading-tight">Kelvin M.</p><p class="text-xs text-secondary">Store Manager</p></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile nav drawer -->
+<div id="navOvl" class="hidden fixed inset-0 bg-black/40 z-50"></div>
+<aside id="navDrawer" class="fixed top-0 left-0 h-full w-72 bg-white z-[60] shadow-2xl -translate-x-full transition-transform duration-200 p-4">
+  <div class="flex items-center justify-between mb-4">
+    <span class="font-bold text-price-primary">Daisolve Admin</span>
+    <button id="navClose" class="p-2 rounded-lg hover:bg-surface-subtle"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div class="flex flex-col text-sm font-semibold">
+    <a class="px-3 py-3 rounded-lg text-primary bg-surface-subtle" href="/admin">Dashboard</a>
+    <a class="px-3 py-3 rounded-lg hover:bg-surface-subtle" href="/home">Storefront Home</a>
+    <a class="px-3 py-3 rounded-lg hover:bg-surface-subtle" href="/shop">Shop all phones</a>
+    <a class="px-3 py-3 rounded-lg hover:bg-surface-subtle" href="/brands">Brands</a>
+    <a class="px-3 py-3 rounded-lg hover:bg-surface-subtle" href="/blog">Blog</a>
+    <a class="px-3 py-3 rounded-lg hover:bg-surface-subtle" href="/checkout">Checkout</a>
+    <a class="px-3 py-3 rounded-lg hover:bg-surface-subtle" href="/shop">Product page</a>
+  </div>
+</aside>
+
+<main class="w-full max-w-7xl mx-auto px-4 md:px-8 pt-5 space-y-6">
+
+  <!-- Store status + quick actions -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-4 rounded-xl border border-surface-border shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary"><span class="material-symbols-outlined">storefront</span></div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-base font-bold text-price-primary">Live Store - Nairobi Hub</h1>
+          <span class="px-2 py-0.5 rounded lbl bg-surface-subtle text-primary border border-surface-border">Online</span>
+        </div>
+        <p class="text-xs text-secondary">Orders placed on the storefront on this device appear below automatically.</p>
+      </div>
+    </div>
+    <div class="flex items-center flex-wrap gap-2">
+      <a href="/shop" class="bg-primary text-white hover:bg-primary-container px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 active:scale-95 shadow-sm"><span class="material-symbols-outlined text-white">storefront</span>Open Shop</a>
+      <a href="/blog" class="bg-white border border-surface-border text-price-primary hover:bg-surface-subtle px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 active:scale-95"><span class="material-symbols-outlined text-primary">menu_book</span>Blog</a>
+      <a id="waTop" target="_blank" rel="noopener" href="#" class="bg-white border border-surface-border text-price-primary hover:bg-surface-subtle px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 active:scale-95"><span class="material-symbols-outlined text-mpesa-green">chat</span>WhatsApp</a>
+      <button id="refreshBtn" class="bg-white border border-surface-border text-price-primary hover:bg-surface-subtle px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 active:scale-95"><span class="material-symbols-outlined text-primary">refresh</span>Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div class="bg-white p-4 rounded-xl border border-surface-border shadow-sm">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs text-secondary">Today's Revenue</span><span class="p-1.5 rounded-lg bg-surface-container-low text-primary"><span class="material-symbols-outlined">payments</span></span></div>
+      <span id="kRevenue" class="text-lg md:text-[22px] font-extrabold text-price-primary block">KSh 0</span>
+      <span id="kRevenueSub" class="text-xs text-secondary">All-time: KSh 0</span>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-surface-border shadow-sm">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs text-secondary">Total Orders</span><span class="p-1.5 rounded-lg bg-surface-container-low text-primary"><span class="material-symbols-outlined">shopping_bag</span></span></div>
+      <span id="kOrders" class="text-lg md:text-[22px] font-extrabold text-price-primary block">0 Orders</span>
+      <div class="flex gap-2 mt-1 lbl"><span id="kPend" class="text-tertiary-container bg-tertiary-fixed px-1.5 rounded">0 Pending</span><span id="kDone" class="text-success">0 Done</span><span id="kTrans" class="text-secondary">0 Transit</span></div>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-surface-border shadow-sm">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs text-secondary">Payments Confirmed</span><span class="p-1.5 rounded-lg bg-emerald-50 text-mpesa-green"><span class="material-symbols-outlined">receipt_long</span></span></div>
+      <span id="kPaid" class="text-lg md:text-[22px] font-extrabold text-price-primary block">KSh 0</span>
+      <span id="kPaidSub" class="text-xs text-secondary">0 of 0 orders paid</span>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-surface-border shadow-sm">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs text-secondary">Low Stock Alert</span><span class="p-1.5 rounded-lg bg-orange-50 text-tertiary"><span class="material-symbols-outlined">warning</span></span></div>
+      <span id="kLow" class="text-lg md:text-[22px] font-extrabold text-danger block">0 Models</span>
+      <span class="text-xs text-tertiary">3 units or fewer left</span>
+    </div>
+  </div>
+
+  <!-- Payment verification + side panel -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-surface-border shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
+        <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-mpesa-green"></span><h2 class="text-base font-semibold text-price-primary">M-PESA Pochi Payment Verification</h2></div>
+        <div class="text-xs text-secondary">Pochi: <strong class="text-price-primary">+254 790 835039</strong></div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="relative flex-1">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary"><span class="material-symbols-outlined">search</span></span>
+          <input id="refInput" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-surface-border bg-surface-bright focus:outline-none focus:border-primary text-sm font-mono uppercase tracking-wider" placeholder="M-PESA code or order ID (e.g. SLK49X8YP1, DAI-AB123)" type="text"/>
+        </div>
+        <button id="verifyBtn" class="bg-mpesa-green hover:opacity-95 text-white px-5 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"><span class="material-symbols-outlined">check_circle</span>Verify &amp; Mark Paid</button>
+      </div>
+      <p id="verifyMsg" class="text-xs text-secondary hidden"></p>
+      <div class="space-y-2 pt-1">
+        <div class="lbl uppercase tracking-wider text-secondary">Orders waiting for payment confirmation</div>
+        <div id="awaitList" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-border pb-3">
+        <h2 class="text-base font-semibold text-price-primary">Customers &amp; Subscribers</h2>
+        <span id="custCount" class="lbl bg-surface-container-low text-primary px-2 py-0.5 rounded-full">0</span>
+      </div>
+      <div id="custList" class="space-y-2 max-h-64 overflow-y-auto no-scrollbar"></div>
+      <div class="bg-surface-subtle p-3 rounded-lg border border-surface-border flex items-start gap-2.5 text-xs">
+        <span class="material-symbols-outlined text-primary mt-0.5">info</span>
+        <div><p class="font-bold text-price-primary">Data lives in this browser</p><p class="text-secondary">Orders and accounts are stored on the device used to shop. Open this page in the same browser to see them. Customers who ordered elsewhere reach you on WhatsApp.</p></div>
+      </div>
+      <div class="flex items-center justify-between text-xs"><span class="text-secondary">Newsletter subscribers</span><strong id="subCount" class="text-price-primary">0</strong></div>
+    </div>
+  </div>
+
+  <!-- Orders -->
+  <div class="bg-white rounded-xl border border-surface-border shadow-sm p-5 space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border pb-3">
+      <div>
+        <h2 class="text-xl font-bold text-price-primary">Fulfilment &amp; Dispatch Queue</h2>
+        <p class="text-xs text-secondary">Confirm payment, dispatch, and mark orders delivered.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="tabs" class="flex items-center gap-1 bg-surface-subtle p-1 rounded-lg border border-surface-border overflow-x-auto no-scrollbar"></div>
+        <button id="exportOrders" class="bg-surface-subtle hover:bg-surface-container-high border border-surface-border text-price-primary px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-sm">download</span>CSV</button>
+      </div>
+    </div>
+    <div id="orderList" class="space-y-3.5"></div>
+  </div>
+
+  <!-- Manage products (Supabase) -->
+  <div class="bg-white rounded-xl border border-surface-border shadow-sm p-5 space-y-4" id="prodCard">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
+      <div><h2 class="text-xl font-bold text-price-primary">Manage Products</h2>
+      <p class="text-xs text-secondary">Add or delete products in the live database. Sign in with your admin account.</p></div>
+      <div id="authBar" class="text-xs text-secondary"></div>
+    </div>
+    <form id="loginForm" class="grid grid-cols-1 sm:grid-cols-3 gap-2" onsubmit="return false">
+      <input id="lgEmail" type="email" autocomplete="username" placeholder="Admin email" class="px-3 py-2 rounded-lg border border-surface-border text-sm"/>
+      <input id="lgPass" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 rounded-lg border border-surface-border text-sm"/>
+      <button id="lgBtn" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Sign in</button>
+    </form>
+    <div id="prodAdmin" class="hidden space-y-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+        <input id="pName" placeholder="Product name *" class="col-span-2 px-3 py-2 rounded-lg border border-surface-border"/>
+        <input id="pBrand" list="brandList" placeholder="Brand *" class="px-3 py-2 rounded-lg border border-surface-border"/><datalist id="brandList"></datalist>
+        <input id="pPrice" type="number" min="0" placeholder="Price (KSh) *" class="px-3 py-2 rounded-lg border border-surface-border"/>
+        <input id="pOld" type="number" min="0" placeholder="Old price (optional)" class="px-3 py-2 rounded-lg border border-surface-border"/>
+        <input id="pRam" type="number" min="0" placeholder="RAM GB" class="px-3 py-2 rounded-lg border border-surface-border"/>
+        <input id="pStorage" type="number" min="0" placeholder="Storage GB" class="px-3 py-2 rounded-lg border border-surface-border"/>
+        <select id="pNet" class="px-3 py-2 rounded-lg border border-surface-border"><option value="">Network: none</option><option value="5g">5G</option><option value="4g">4G</option></select>
+        <input id="pStock" type="number" min="0" value="5" placeholder="Stock" class="px-3 py-2 rounded-lg border border-surface-border"/>
+        <label id="pImgBox" class="col-span-2 md:col-span-3 flex items-center gap-3 px-3 py-2 rounded-lg border-2 border-dashed border-surface-border cursor-pointer hover:border-primary">
+          <div class="w-14 h-14 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0"><img id="pImgPrev" class="hidden w-full h-full object-contain" alt=""/><span id="pImgIcon" class="material-symbols-outlined text-secondary">add_photo_alternate</span></div>
+          <div class="min-w-0"><p class="text-sm font-semibold text-price-primary">Add product image</p><p id="pImgName" class="text-xs text-secondary truncate">Tap to choose a photo (JPG, PNG, WebP)</p></div>
+          <input id="pFile" type="file" accept="image/*" class="hidden"/>
+        </label>
+        <input id="pImg" placeholder="...or paste an image URL" class="hidden"/>
+        <button id="pAdd" class="bg-primary text-white px-4 py-2 rounded-lg font-semibold">Add product</button>
+      </div>
+      <input id="pSearch" type="search" placeholder="Search products to delete..." class="w-full px-3 py-2 rounded-lg border border-surface-border text-sm"/>
+      <div class="flex items-center justify-between gap-2 text-xs"><label class="flex items-center gap-2 font-semibold text-price-primary cursor-pointer"><input id="pAll" type="checkbox"/> <span id="pAllTxt">Select all</span></label><button id="pBulk" disabled class="px-3 py-1.5 rounded-lg bg-danger text-white font-bold disabled:opacity-40 disabled:cursor-not-allowed">Delete selected (0)</button></div>
+      <div id="pList" class="divide-y divide-surface-border max-h-96 overflow-y-auto border border-surface-border rounded-lg"></div>
+    </div>
+  </div>
+
+  <!-- Manage blog articles (Supabase) -->
+  <div id="blogAdmin" class="hidden bg-white rounded-xl border border-surface-border shadow-sm p-5 space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
+      <div><h2 class="text-xl font-bold text-price-primary">Manage Blog Articles</h2>
+      <p class="text-xs text-secondary">Everything on the blog and the homepage comes from here. Write, edit, hide or delete articles.</p></div>
+      <span id="bgMode" class="text-xs font-bold text-primary">New article</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+      <input id="bTitle" placeholder="Article title *" class="col-span-2 md:col-span-4 px-3 py-2 rounded-lg border border-surface-border"/>
+      <select id="bCat" class="px-3 py-2 rounded-lg border border-surface-border"><option value="guide">Buying Guides</option><option value="flagship">Flagship Comparisons</option><option value="deals">Pricing &amp; Deals</option><option value="verify">Genuine Phone Verification</option><option value="5g">5G Networks Kenya</option></select>
+      <input id="bTag" placeholder="Label e.g. Camera Shootout" class="px-3 py-2 rounded-lg border border-surface-border"/>
+      <input id="bRead" type="number" min="1" placeholder="Read time (min)" class="px-3 py-2 rounded-lg border border-surface-border"/>
+      <input id="bAuthor" placeholder="Author (optional)" class="px-3 py-2 rounded-lg border border-surface-border"/>
+      <textarea id="bEx" rows="2" placeholder="Short summary shown on cards *" class="col-span-2 md:col-span-4 px-3 py-2 rounded-lg border border-surface-border"></textarea>
+      <textarea id="bBody" rows="10" placeholder="Article text *&#10;&#10;Leave a blank line between paragraphs.&#10;Start a line with ## for a heading.&#10;Start lines with - for a bullet list." class="col-span-2 md:col-span-4 px-3 py-2 rounded-lg border border-surface-border font-mono text-xs"></textarea>
+      <input id="bFoot" placeholder="Footer note on card (optional)" class="col-span-2 md:col-span-2 px-3 py-2 rounded-lg border border-surface-border"/>
+      <label class="flex items-center gap-2 px-1"><input id="bFeat" type="checkbox"/> Featured</label>
+      <label class="flex items-center gap-2 px-1"><input id="bPub" type="checkbox" checked/> Published</label>
+      <label class="col-span-2 md:col-span-4 flex items-center gap-3 px-3 py-2 rounded-lg border-2 border-dashed border-surface-border cursor-pointer hover:border-primary">
+        <div class="w-20 h-14 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0"><img id="bImgPrev" class="hidden w-full h-full object-cover" alt=""/><span id="bImgIcon" class="material-symbols-outlined text-secondary">add_photo_alternate</span></div>
+        <div class="min-w-0"><p class="text-sm font-semibold text-price-primary">Article cover image</p><p id="bImgName" class="text-xs text-secondary truncate">Tap to choose a photo (JPG, PNG, WebP)</p></div>
+        <input id="bFile" type="file" accept="image/*" class="hidden"/>
+      </label>
+      <div class="col-span-2 md:col-span-4 flex gap-2"><button id="bSave" class="bg-primary text-white px-5 py-2 rounded-lg font-semibold">Save article</button><button id="bCancel" class="hidden border border-surface-border px-4 py-2 rounded-lg font-semibold">Cancel edit</button></div>
+    </div>
+    <div class="flex items-center justify-between gap-2 text-xs"><label class="flex items-center gap-2 font-semibold text-price-primary cursor-pointer"><input id="aAll" type="checkbox"/> <span id="aAllTxt">Select all</span></label><button id="aBulk" disabled class="px-3 py-1.5 rounded-lg bg-danger text-white font-bold disabled:opacity-40 disabled:cursor-not-allowed">Delete selected (0)</button></div>
+      <div id="bList" class="divide-y divide-surface-border max-h-96 overflow-y-auto border border-surface-border rounded-lg"></div>
+  </div>
+
+  <!-- Inventory -->
+  <div class="bg-white rounded-xl border border-surface-border shadow-sm p-5 space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
+      <div>
+        <h2 class="text-xl font-bold text-price-primary">Inventory &amp; Stock Watchlist</h2>
+        <p class="text-xs text-secondary">Pulled live from the database. Sign in under Manage Products to save stock to the database.</p>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <input id="invSearch" type="search" placeholder="Search phones..." class="px-3 py-1.5 rounded-lg border border-surface-border text-xs focus:outline-none focus:border-primary"/>
+        <select id="invFilter" class="px-3 py-1.5 rounded-lg border border-surface-border text-xs focus:outline-none focus:border-primary">
+          <option value="all">All stock</option><option value="low">Low &amp; critical</option><option value="out">Out of stock</option>
+        </select>
+        <button id="exportInv" class="bg-surface-subtle hover:bg-surface-container-high border border-surface-border text-price-primary px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">download</span>Export CSV</button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead><tr class="border-b border-surface-border lbl uppercase text-secondary">
+          <th class="py-2.5 px-3">Device Model</th><th class="py-2.5 px-3">Specs</th><th class="py-2.5 px-3">Price</th><th class="py-2.5 px-3">Stock</th><th class="py-2.5 px-3">Status</th><th class="py-2.5 px-3 text-right">Action</th>
+        </tr></thead>
+        <tbody id="invBody" class="divide-y divide-surface-border text-sm"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Integrations / quick links -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <a href="/home" class="bg-white p-4 rounded-xl border border-surface-border shadow-sm flex items-center gap-3 hover:border-primary transition-colors">
+      <div class="w-10 h-10 rounded-full bg-surface-container-low text-primary flex items-center justify-center"><span class="material-symbols-outlined">home</span></div>
+      <div><p class="font-bold text-price-primary text-sm">Storefront</p><p class="text-xs text-secondary">/home - see what customers see</p></div>
+    </a>
+    <a href="/checkout" class="bg-white p-4 rounded-xl border border-surface-border shadow-sm flex items-center gap-3 hover:border-primary transition-colors">
+      <div class="w-10 h-10 rounded-full bg-emerald-50 text-mpesa-green flex items-center justify-center"><span class="material-symbols-outlined">shopping_cart_checkout</span></div>
+      <div><p class="font-bold text-price-primary text-sm">Checkout</p><p class="text-xs text-secondary">Test an order end to end</p></div>
+    </a>
+    <a id="waCard" target="_blank" rel="noopener" href="#" class="bg-white p-4 rounded-xl border border-surface-border shadow-sm flex items-center gap-3 hover:border-primary transition-colors">
+      <div class="w-10 h-10 rounded-full bg-emerald-50 text-mpesa-green flex items-center justify-center"><span class="material-symbols-outlined">forum</span></div>
+      <div><p class="font-bold text-price-primary text-sm">WhatsApp Orders</p><p class="text-xs text-secondary">+254 790 835039</p></div>
+    </a>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-12 bg-price-primary text-primary-fixed-dim w-full border-t border-secondary">
+  <div class="w-full py-10 px-4 md:px-8 max-w-7xl mx-auto flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div><span class="text-xl font-bold text-white">Daisolve Technologies</span><p class="text-xs text-outline-variant mt-1">Genuine gadgets - Jamia Shopping Mall, Nairobi CBD</p></div>
+      <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
+        <a class="text-outline-variant hover:text-white" href="/home">Home</a>
+        <a class="text-outline-variant hover:text-white" href="/shop">Shop</a>
+        <a class="text-outline-variant hover:text-white" href="/brands">Brands</a>
+        <a class="text-outline-variant hover:text-white" href="/blog">Blog</a>
+        <a class="text-outline-variant hover:text-white" href="/checkout">Checkout</a>
+        <a class="text-outline-variant hover:text-white" href="/home#contact">Contact</a>
+      </div>
+    </div>
+    <div class="pt-6 border-t border-secondary/50 flex flex-col sm:flex-row items-center justify-between text-xs text-outline-variant gap-2">
+      <p>&copy; <span id="yr"></span> Daisolve Technologies Kenya. Genuine Gadgets.</p>
+      <p class="text-surface-subtle">Internal Operations Portal (Authorized Staff Only)</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile bottom nav -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex items-center justify-around h-[60px] px-2 bg-white border-t border-surface-border shadow-[0_-4px_20px_0_rgba(16,33,61,0.08)]">
+  <a class="flex flex-col items-center text-primary font-bold" href="/admin"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">dashboard</span><span class="lbl">Admin</span></a>
+  <a class="flex flex-col items-center text-secondary hover:text-primary" href="/home"><span class="material-symbols-outlined">home</span><span class="lbl">Home</span></a>
+  <a class="flex flex-col items-center text-secondary hover:text-primary" href="/shop"><span class="material-symbols-outlined">storefront</span><span class="lbl">Shop</span></a>
+  <a class="flex flex-col items-center text-secondary hover:text-primary" href="/brands"><span class="material-symbols-outlined">devices</span><span class="lbl">Brands</span></a>
+  <a class="flex flex-col items-center text-secondary hover:text-primary" href="/blog"><span class="material-symbols-outlined">menu_book</span><span class="lbl">Blog</span></a>
+</nav>
+
+<!-- Modal -->
+<div id="modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/50 p-4">
+  <div id="modalBox" class="bg-white rounded-2xl w-full max-w-md p-5 shadow-2xl max-h-[90vh] overflow-y-auto"></div>
+</div>
+<div id="toast" class="hidden fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-6 z-[90] bg-price-primary text-white text-xs font-medium px-4 py-3 rounded-lg shadow-xl max-w-[90vw]"></div>
+<div id="printArea"></div>
+
+<!-- Same catalogue the storefront uses -->
+<script src="/catalog.js"></script><script src="/supabase-catalog.js"></script>
+<script>
+(() => {
+'use strict';
+const WA = '254790835039';
+const $ = (s, r = document) => r.querySelector(s);
+const kes = n => 'KSh ' + Number(n || 0).toLocaleString('en-KE');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const waLink = t => 'https://wa.me/' + WA + (t ? '?text=' + encodeURIComponent(t) : '');
+/* Same storage format as site.js (keys are prefixed with dai_) */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('dai_' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('dai_' + k, JSON.stringify(v)); } catch (e) {} }
+};
+const PAY = {pochi:'M-PESA Pochi', bank:'Bank transfer', card:'Visa / Mastercard', paypal:'PayPal', intl:'International'};
+const DELIV = {pickup:'Collect at Jamia Shopping Mall', nairobi:'Same-day Nairobi delivery', kenya:'Countrywide dispatch', intl:'International shipping'};
+const STATUS = {pending:'Pending', dispatched:'In Transit', delivered:'Delivered', cancelled:'Cancelled'};
+const catalog = window.DAI_CATALOG || [];
+let filter = 'all';
+
+/* admin-only data, kept apart from the order objects the storefront writes */
+const meta = () => store.get('admin_meta', {});      // {orderId: {status, paid}}
+const setMeta = (id, patch) => { const m = meta(); m[id] = Object.assign({status:'pending', paid:false}, m[id], patch); store.set('admin_meta', m); };
+const getMeta = id => Object.assign({status:'pending', paid:false}, meta()[id]);
+const orders = () => store.get('orders', []);
+
+/* default stock: stable number per product until the manager adjusts it */
+function defaultStock(p) { let h = 0; for (const c of p.id) h = (h * 31 + c.charCodeAt(0)) % 997; return (h % 14) + 1; }
+const stockMap = () => store.get('admin_stock', {});
+const stockOf = p => { const s = stockMap()[p.id]; return s != null ? s : (p.stock != null ? p.stock : defaultStock(p)); };
+const setStock = (id, n) => { const s = stockMap(); s[id] = Math.max(0, n | 0); store.set('admin_stock', s); };
+
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.remove('hidden'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.add('hidden'), 3000); }
+function openModal(html) { const m = $('#modal'); $('#modalBox').innerHTML = html; m.classList.remove('hidden'); m.classList.add('flex'); }
+function closeModal() { const m = $('#modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
+function download(name, text) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type:'text/csv'})); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+const csv = rows => rows.map(r => r.map(c => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(',')).join('\n');
+const isToday = iso => new Date(iso).toDateString() === new Date().toDateString();
+const dtFmt = iso => new Date(iso).toLocaleString('en-KE', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+const maskPhone = p => { const d = String(p || '').replace(/\D/g, ''); return d.length > 6 ? d.slice(0, 4) + '***' + d.slice(-3) : p; };
+const waNum = p => { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('0')) d = '254' + d.slice(1); return d; };
+
+/* ---------- KPIs ---------- */
+function renderKpis() {
+  const all = orders().filter(o => getMeta(o.id).status !== 'cancelled');
+  const today = all.filter(o => isToday(o.date));
+  const paid = all.filter(o => getMeta(o.id).paid);
+  const cnt = s => orders().filter(o => getMeta(o.id).status === s).length;
+  $('#kRevenue').textContent = kes(today.reduce((t, o) => t + o.total, 0));
+  $('#kRevenueSub').textContent = 'All-time: ' + kes(all.reduce((t, o) => t + o.total, 0));
+  $('#kOrders').textContent = orders().length + (orders().length === 1 ? ' Order' : ' Orders');
+  $('#kPend').textContent = cnt('pending') + ' Pending';
+  $('#kDone').textContent = cnt('delivered') + ' Done';
+  $('#kTrans').textContent = cnt('dispatched') + ' Transit';
+  $('#kPaid').textContent = kes(paid.reduce((t, o) => t + o.total, 0));
+  $('#kPaidSub').textContent = paid.length + ' of ' + all.length + ' orders paid';
+  const low = catalog.filter(p => stockOf(p) <= 3).length;
+  $('#kLow').textContent = low + (low === 1 ? ' Model' : ' Models');
+}
+
+/* ---------- Awaiting payment ---------- */
+function renderAwait() {
+  const list = orders().filter(o => !getMeta(o.id).paid && getMeta(o.id).status !== 'cancelled');
+  $('#awaitList').innerHTML = list.length ? list.slice(0, 6).map(o => `
+  <div class="flex items-center justify-between gap-3 p-3 rounded-lg bg-tertiary-fixed/30 border border-tertiary-fixed">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 rounded-full bg-white text-tertiary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined">pending</span></div>
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-2"><span class="font-mono font-bold text-price-primary text-sm">${esc(o.id)}</span>
+          <span class="bg-tertiary-fixed text-tertiary px-1.5 py-0.5 rounded lbl">${esc(PAY[o.pay] || o.pay)}</span>
+          ${o.ref ? `<span class="font-mono text-xs text-secondary">Ref: ${esc(o.ref)}</span>` : ''}</div>
+        <p class="text-xs text-secondary truncate">${esc(o.customer.name)} - ${esc(maskPhone(o.customer.phone))} - ${dtFmt(o.date)}</p>
+      </div>
+    </div>
+    <div class="text-right flex-shrink-0"><span class="font-bold text-price-primary text-sm block">${kes(o.total)}</span>
+      <button data-markpaid="${esc(o.id)}" class="text-primary hover:underline lbl">Mark Paid</button></div>
+  </div>`).join('') : `<div class="p-4 rounded-lg bg-surface-subtle border border-surface-border text-xs text-secondary text-center">No orders waiting for payment confirmation.</div>`;
+}
+
+/* ---------- Orders ---------- */
+function renderTabs() {
+  const all = orders();
+  const n = s => s === 'all' ? all.length : all.filter(o => getMeta(o.id).status === s).length;
+  const tabs = [['all', 'All'], ['pending', 'Pending'], ['dispatched', 'In Transit'], ['delivered', 'Delivered'], ['cancelled', 'Cancelled']];
+  $('#tabs').innerHTML = tabs.map(([k, l]) => `<button data-tab="${k}" class="px-3 py-1 rounded-md lbl whitespace-nowrap ${filter === k ? 'bg-primary text-white shadow-sm' : 'text-price-primary hover:bg-white'}">${l} (${n(k)})</button>`).join('');
+}
+function renderOrders() {
+  const list = orders().filter(o => filter === 'all' || getMeta(o.id).status === filter);
+  if (!list.length) {
+    $('#orderList').innerHTML = `<div class="p-8 text-center rounded-xl border border-dashed border-surface-border bg-surface-bright">
+      <span class="material-symbols-outlined text-primary" style="font-size:36px">inbox</span>
+      <p class="font-bold text-price-primary mt-2">No orders here yet</p>
+      <p class="text-xs text-secondary mt-1">Place a test order from the storefront and it will show up on this page.</p>
+      <a href="/shop" class="inline-flex mt-3 bg-primary text-white px-4 py-2 rounded-lg text-xs font-semibold">Go to Shop</a></div>`;
+    return;
+  }
+  $('#orderList').innerHTML = list.map(o => {
+    const m = getMeta(o.id);
+    const items = o.items.map(i => `${esc(i.name)} x${i.qty}`).join(', ');
+    const stCls = {pending:'bg-tertiary-fixed text-tertiary', dispatched:'bg-surface-container-low text-primary', delivered:'bg-emerald-50 text-mpesa-green', cancelled:'bg-red-50 text-danger'}[m.status];
+    const wa = waLink('');
+    const clientWa = 'https://wa.me/' + waNum(o.customer.phone) + '?text=' + encodeURIComponent(`Hello ${o.customer.name}, this is Daisolve Technologies about your order ${o.id} (${kes(o.total)}).`);
+    return `<div class="p-4 rounded-xl border border-surface-border bg-surface-bright hover:border-primary transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-2 min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-bold text-price-primary text-base">Order #${esc(o.id)}</span>
+          <span class="${m.paid ? 'bg-emerald-50 text-mpesa-green border border-emerald-200' : 'bg-tertiary-fixed text-tertiary border border-tertiary/30'} lbl px-2 py-0.5 rounded-full">${m.paid ? 'Paid' : 'Awaiting payment'} - ${esc(PAY[o.pay] || o.pay)}${o.ref ? ' (' + esc(o.ref) + ')' : ''}</span>
+          <span class="${stCls} lbl px-2 py-0.5 rounded-full">${STATUS[m.status]}</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="p-2 rounded bg-surface-subtle border border-surface-border text-price-primary"><span class="material-symbols-outlined">smartphone</span></div>
+          <div class="min-w-0">
+            <p class="font-bold text-price-primary text-sm">${items}</p>
+            <p class="text-xs text-secondary">Customer: <span class="font-semibold text-price-primary">${esc(o.customer.name)}</span> - ${esc(o.customer.phone)}${o.customer.email ? ' - ' + esc(o.customer.email) : ''}</p>
+            <p class="text-xs text-secondary mt-0.5">${esc(DELIV[o.delivery] || o.delivery)}${o.address ? ' - ' + esc(o.address) : ''} - ${dtFmt(o.date)}</p>
+            ${o.notes ? `<p class="text-xs text-secondary mt-0.5">Note: ${esc(o.notes)}</p>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col items-start lg:items-end gap-3 border-t lg:border-t-0 pt-3 lg:pt-0 border-surface-border flex-shrink-0">
+        <span class="text-lg font-extrabold text-price-primary">${kes(o.total)}</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <button data-waybill="${esc(o.id)}" class="bg-white border border-surface-border hover:bg-surface-subtle text-price-primary px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">print</span>Waybill</button>
+          <a href="${clientWa}" target="_blank" rel="noopener" class="bg-white border border-surface-border hover:bg-surface-subtle text-price-primary px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm text-mpesa-green">chat</span>WhatsApp</a>
+          ${!m.paid && m.status !== 'cancelled' ? `<button data-markpaid="${esc(o.id)}" class="bg-mpesa-green text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span>Mark Paid</button>` : ''}
+          ${m.status === 'pending' ? `<button data-setstatus="dispatched" data-id="${esc(o.id)}" class="bg-primary text-white hover:bg-primary-container px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm"><span class="material-symbols-outlined text-sm">two_wheeler</span>Dispatch</button>` : ''}
+          ${m.status === 'dispatched' ? `<button data-setstatus="delivered" data-id="${esc(o.id)}" class="bg-primary text-white hover:bg-primary-container px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm"><span class="material-symbols-outlined text-sm">check</span>Confirm Handover</button>` : ''}
+          ${m.status === 'pending' || m.status === 'dispatched' ? `<button data-setstatus="cancelled" data-id="${esc(o.id)}" class="text-danger hover:underline text-xs font-bold px-1">Cancel</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Customers ---------- */
+function renderCustomers() {
+  const users = store.get('users', []);
+  const seen = {};
+  orders().forEach(o => { const k = String(o.customer.phone).replace(/\D/g, '').slice(-9); (seen[k] = seen[k] || {name:o.customer.name, phone:o.customer.phone, n:0, total:0}); seen[k].n++; seen[k].total += o.total; });
+  const buyers = Object.values(seen);
+  $('#custCount').textContent = users.length + ' accounts';
+  $('#subCount').textContent = store.get('subs', []).length;
+  const rows = [];
+  buyers.forEach(b => rows.push(`<div class="p-3 bg-surface-subtle rounded-lg border border-surface-border flex items-center justify-between gap-2"><div class="min-w-0"><p class="font-bold text-price-primary text-sm truncate">${esc(b.name)}</p><p class="text-xs text-secondary">${esc(b.phone)} - ${b.n} order${b.n > 1 ? 's' : ''}</p></div><span class="text-xs font-bold text-price-primary whitespace-nowrap">${kes(b.total)}</span></div>`));
+  users.filter(u => !buyers.some(b => String(b.phone).replace(/\D/g, '').slice(-9) === String(u.phone).replace(/\D/g, '').slice(-9))).forEach(u => rows.push(`<div class="p-3 bg-white rounded-lg border border-surface-border"><p class="font-bold text-price-primary text-sm">${esc(u.name)}</p><p class="text-xs text-secondary">${esc(u.email)} - ${esc(u.phone)}</p></div>`));
+  $('#custList').innerHTML = rows.join('') || `<p class="text-xs text-secondary text-center py-4">No customers yet.</p>`;
+}
+
+/* ---------- Inventory ---------- */
+function renderInventory() {
+  const q = $('#invSearch').value.trim().toLowerCase(), f = $('#invFilter').value;
+  const rows = catalog.filter(p => {
+    const s = stockOf(p);
+    if (f === 'low' && s > 3) return false;
+    if (f === 'out' && s > 0) return false;
+    return !q || (p.name + ' ' + p.brand).toLowerCase().includes(q);
+  });
+  $('#invBody').innerHTML = rows.map(p => {
+    const s = stockOf(p);
+    const st = s === 0 ? ['Out of stock', 'bg-red-50 text-danger', 'text-danger'] : s <= 2 ? ['Critical', 'bg-red-50 text-danger', 'text-danger'] : s <= 3 ? ['Low Stock', 'bg-tertiary-fixed text-tertiary', 'text-tertiary'] : ['Healthy', 'bg-emerald-50 text-mpesa-green', 'text-price-primary'];
+    return `<tr class="hover:bg-surface-subtle transition-colors">
+      <td class="py-3 px-3"><div class="font-bold text-price-primary">${esc(p.name)}</div><div class="text-xs text-secondary">${esc(p.brand)} - ${esc(p.id)}</div></td>
+      <td class="py-3 px-3 text-secondary">${esc(p.spec || '')}</td>
+      <td class="py-3 px-3 font-bold text-price-primary whitespace-nowrap">${kes(p.price)}</td>
+      <td class="py-3 px-3"><span class="font-bold ${st[2]}">${s} unit${s === 1 ? '' : 's'}</span></td>
+      <td class="py-3 px-3"><span class="inline-flex px-2 py-0.5 rounded lbl ${st[1]}">${st[0]}</span></td>
+      <td class="py-3 px-3 text-right whitespace-nowrap"><button data-adjust="${esc(p.id)}" class="text-primary hover:underline lbl">Adjust</button> <span class="text-outline-variant">|</span> <a href="/shop/${encodeURIComponent(p.id)}" target="_blank" class="text-secondary hover:underline lbl">View</a></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="6" class="py-8 text-center text-xs text-secondary">No phones match.</td></tr>`;
+}
+
+function renderAll() { renderKpis(); renderAwait(); renderTabs(); renderOrders(); renderCustomers(); renderInventory(); }
+
+/* ---------- Actions ---------- */
+function markPaid(id) { setMeta(id, {paid:true}); renderAll(); toast('Order ' + id + ' marked as paid'); }
+function setStatus(id, s) {
+  if (s === 'cancelled' && !confirm('Cancel order ' + id + '?')) return;
+  setMeta(id, {status:s});
+  if (s === 'delivered') setMeta(id, {paid:true});
+  renderAll(); toast('Order ' + id + ' is now ' + STATUS[s]);
+}
+function waybill(id) {
+  const o = orders().find(x => x.id === id); if (!o) return;
+  $('#printArea').innerHTML = `<div style="font-family:Arial,sans-serif;max-width:480px;margin:20px auto;border:2px solid #10213D;padding:18px">
+    <h2 style="margin:0">Daisolve Technologies</h2><p style="margin:2px 0 12px;font-size:12px">Jamia Shopping Mall, Nairobi CBD - +254 790 835039</p>
+    <h3 style="margin:0 0 8px">Waybill ${esc(o.id)}</h3>
+    <p style="margin:4px 0"><b>To:</b> ${esc(o.customer.name)} (${esc(o.customer.phone)})</p>
+    <p style="margin:4px 0"><b>Delivery:</b> ${esc(DELIV[o.delivery] || o.delivery)}${o.address ? ', ' + esc(o.address) : ''}</p>
+    <p style="margin:4px 0"><b>Items:</b></p><ul style="margin:4px 0 8px">${o.items.map(i => `<li>${esc(i.name)} x${i.qty}</li>`).join('')}</ul>
+    <p style="margin:4px 0"><b>Total:</b> ${kes(o.total)} - ${getMeta(o.id).paid ? 'PAID' : 'COLLECT PAYMENT'}</p>
+    <p style="margin:4px 0;font-size:12px">Printed ${new Date().toLocaleString('en-KE')}</p></div>`;
+  window.print();
+}
+function verify() {
+  const v = $('#refInput').value.trim().toUpperCase(), msg = $('#verifyMsg');
+  msg.classList.remove('hidden');
+  if (!v) { msg.className = 'text-xs text-danger'; msg.textContent = 'Enter an M-PESA code or an order ID first.'; return; }
+  const o = orders().find(x => x.id.toUpperCase() === v || (x.ref && x.ref.toUpperCase() === v));
+  if (!o) { msg.className = 'text-xs text-danger'; msg.textContent = 'No order on this device matches ' + v + '. Check the code against your M-PESA message or ask the customer on WhatsApp.'; return; }
+  if (getMeta(o.id).paid) { msg.className = 'text-xs text-secondary'; msg.textContent = 'Order ' + o.id + ' is already marked as paid.'; return; }
+  markPaid(o.id);
+  msg.className = 'text-xs text-mpesa-green font-semibold';
+  msg.textContent = 'Matched order ' + o.id + ' (' + kes(o.total) + ') for ' + o.customer.name + '. Confirm the amount in your M-PESA statement.';
+  $('#refInput').value = '';
+}
+function adjust(id) {
+  const p = catalog.find(x => x.id === id); if (!p) return;
+  openModal(`<div class="flex items-start justify-between gap-3"><div><h3 class="font-bold text-price-primary">Adjust stock</h3><p class="text-xs text-secondary mt-0.5">${esc(p.name)}</p></div><button data-closemodal class="p-1 rounded-full hover:bg-surface-subtle"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="mt-4 flex items-center gap-2"><button id="stM" class="w-10 h-10 rounded-lg border border-surface-border font-bold text-lg">-</button>
+    <input id="stV" type="number" min="0" value="${stockOf(p)}" class="flex-1 text-center rounded-lg border border-surface-border py-2 font-bold"/>
+    <button id="stP" class="w-10 h-10 rounded-lg border border-surface-border font-bold text-lg">+</button></div>
+    <button id="stSave" class="mt-4 w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold">Save</button>`);
+  const inp = $('#stV');
+  $('#stM').onclick = () => inp.value = Math.max(0, (+inp.value || 0) - 1);
+  $('#stP').onclick = () => inp.value = (+inp.value || 0) + 1;
+  $('#stSave').onclick = async () => { const v = Math.max(0, +inp.value || 0); if (sess()) { try { await api('products?id=eq.' + encodeURIComponent(id), {method:'PATCH', headers:{Prefer:'return=minimal'}, body: JSON.stringify({stock: v})}); const m = stockMap(); delete m[id]; store.set('admin_stock', m); await reloadCatalog(); } catch (e) { toast('Save failed: ' + e.message); return; } } else setStock(id, v); closeModal(); renderAll(); toast('Stock updated'); };
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-markpaid],[data-setstatus],[data-waybill],[data-adjust],[data-tab],[data-closemodal]');
+  if (!t) return;
+  if (t.dataset.markpaid) markPaid(t.dataset.markpaid);
+  else if (t.dataset.setstatus) setStatus(t.dataset.id, t.dataset.setstatus);
+  else if (t.dataset.waybill) waybill(t.dataset.waybill);
+  else if (t.dataset.adjust) adjust(t.dataset.adjust);
+  else if (t.dataset.tab) { filter = t.dataset.tab; renderTabs(); renderOrders(); }
+  else if (t.hasAttribute('data-closemodal')) closeModal();
+});
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+$('#verifyBtn').onclick = verify;
+$('#refInput').addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
+$('#refreshBtn').onclick = () => { renderAll(); toast('Refreshed'); };
+$('#invSearch').addEventListener('input', renderInventory);
+$('#invFilter').addEventListener('change', renderInventory);
+$('#exportOrders').onclick = () => {
+  const rows = [['Order','Date','Customer','Phone','Items','Total','Payment','Ref','Paid','Delivery','Address','Status']];
+  orders().forEach(o => rows.push([o.id, o.date, o.customer.name, o.customer.phone, o.items.map(i => i.name + ' x' + i.qty).join('; '), o.total, PAY[o.pay] || o.pay, o.ref, getMeta(o.id).paid ? 'Yes' : 'No', DELIV[o.delivery] || o.delivery, o.address, STATUS[getMeta(o.id).status]]));
+  download('daisolve-orders.csv', csv(rows));
+};
+$('#exportInv').onclick = () => {
+  const rows = [['ID','Name','Brand','Price','Stock']];
+  catalog.forEach(p => rows.push([p.id, p.name, p.brand, p.price, stockOf(p)]));
+  download('daisolve-inventory.csv', csv(rows));
+};
+
+/* ---------- Supabase login + product add/delete ---------- */
+const SB = window.DAI_SUPABASE || {};
+const SESS = 'dai_sb_session';
+const sess = () => { try { return JSON.parse(localStorage.getItem(SESS) || 'null'); } catch (e) { return null; } };
+const setSess = s => { try { s ? localStorage.setItem(SESS, JSON.stringify(s)) : localStorage.removeItem(SESS); } catch (e) {} };
+function saveSession(d) { setSess({access_token: d.access_token, refresh_token: d.refresh_token, expires_at: Math.floor(Date.now() / 1000) + (d.expires_in || 3600), email: (d.user && d.user.email) || (sess() || {}).email}); }
+async function token() {
+  let s = sess(); if (!s) return null;
+  if (s.expires_at - 60 < Date.now() / 1000) {
+    try {
+      const r = await fetch(SB.url + '/auth/v1/token?grant_type=refresh_token', {method:'POST', headers:{apikey:SB.key, 'Content-Type':'application/json'}, body: JSON.stringify({refresh_token: s.refresh_token})});
+      if (!r.ok) throw 0; saveSession(Object.assign(await r.json(), {user:{email:s.email}})); s = sess();
+    } catch (e) { setSess(null); authUi(); return null; }
+  }
+  return s.access_token;
+}
+async function api(path, opts) {
+  const t = await token(); if (!t) throw new Error('Please sign in again');
+  const r = await fetch(SB.url + '/rest/v1/' + path, Object.assign({}, opts, {headers: Object.assign({apikey:SB.key, Authorization:'Bearer ' + t, 'Content-Type':'application/json'}, (opts || {}).headers)}));
+  if (!r.ok) throw new Error((await r.text()) || r.status);
+  return r;
+}
+async function reloadCatalog() {
+  const rows = await (await api('products?select=*&order=sort_order.asc')).json();
+  catalog.length = 0; rows.forEach(r => catalog.push(SB.map(r))); selP.forEach(i => { if (!rows.some(r => r.id === i)) selP.delete(i); });
+  SB.save(rows); renderAll(); renderProducts();
+}
+function authUi() {
+  const s = sess();
+  $('#loginForm').classList.toggle('hidden', !!s);
+  $('#prodAdmin').classList.toggle('hidden', !s);
+  $('#blogAdmin').classList.toggle('hidden', !s);
+  $('#authBar').innerHTML = s ? `Signed in as <b>${esc(s.email || '')}</b> - <button id="lgOut" class="text-primary hover:underline font-semibold">Sign out</button>` : 'Not signed in';
+  if (s) { reloadCatalog().catch(e => toast('Could not load products: ' + e.message)); loadArts(); }
+}
+function renderProducts() {
+  const q = $('#pSearch').value.trim().toLowerCase();
+  const all = catalog.filter(p => !q || (p.name + ' ' + p.brand).toLowerCase().includes(q)); const rows = all.slice(0, 60); allP = all.map(p => p.id);
+  $('#brandList').innerHTML = [...new Set(catalog.map(p => p.brand))].map(b => `<option value="${esc(b)}">`).join('');
+  $('#pList').innerHTML = rows.map(p => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selprod="${esc(p.id)}" ${selP.has(p.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-10 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-contain"/>` : '<span class="material-symbols-outlined text-secondary text-lg">image</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(p.name)}</p><p class="text-xs text-secondary">${esc(p.brand)} - ${kes(p.price)}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-imgprod="${esc(p.id)}" class="text-primary hover:underline text-xs font-bold">${p.img ? 'Change image' : 'Add image'}</button><button data-delprod="${esc(p.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No products.</p>';
+  updBulkP();
+}
+async function login() {
+  const email = $('#lgEmail').value.trim(), password = $('#lgPass').value;
+  if (!email || !password) { toast('Enter email and password'); return; }
+  try {
+    const r = await fetch(SB.url + '/auth/v1/token?grant_type=password', {method:'POST', headers:{apikey:SB.key, 'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
+    const d = await r.json(); if (!r.ok) throw new Error(d.error_description || d.msg || 'Login failed');
+    saveSession(d); $('#lgPass').value = ''; authUi(); toast('Signed in');
+  } catch (e) { toast(e.message); }
+}
+const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+async function addProduct() {
+  const name = $('#pName').value.trim(), brand = $('#pBrand').value.trim(), price = +$('#pPrice').value;
+  if (!name || !brand || !(price > 0)) { toast('Name, brand and price are required'); return; }
+  let id = slugify(name), n = 2; while (catalog.some(p => p.id === id)) id = slugify(name) + '-' + n++;
+  let img = $('#pImg').value.trim() || null;
+  try { if (newFile) { toast('Uploading image...'); img = await uploadImage(newFile, id); } } catch (e) { toast(e.message); return; }
+  const ram = +$('#pRam').value || null, storage = +$('#pStorage').value || null, net = $('#pNet').value || null;
+  const row = {id, name, brand, price, old: +$('#pOld').value || null, ram, storage, net, tags: [], rating: 0, reviews: 0,
+    chips: [ram && storage ? ram + 'GB / ' + storage + 'GB' : storage ? storage + 'GB' : '', net ? net.toUpperCase() : ''].filter(Boolean),
+    sub: 'In Stock', dot: true, img: img, in_dom: false,
+    spec: ram && storage ? ram + 'GB RAM · ' + storage + 'GB Storage' : storage ? storage + 'GB Storage' : '',
+    cat: (price >= 80000 ? 'flagship' : price >= 20000 ? 'midrange' : 'under20k') + (net === '5g' ? ' 5g' : ''),
+    color: '#1769ff', short: name.slice(0, 14), sort_order: Date.now() % 2000000000, stock: +$('#pStock').value || 0};
+  try { await api('products', {method:'POST', headers:{Prefer:'return=minimal'}, body: JSON.stringify(row)}); await reloadCatalog(); ['pName','pBrand','pPrice','pOld','pRam','pStorage','pImg','pFile'].forEach(i => $('#' + i).value = ''); newFile = null; $('#pImgPrev').classList.add('hidden'); $('#pImgIcon').classList.remove('hidden'); $('#pImgName').textContent = 'Tap to choose a photo (JPG, PNG, WebP)'; toast('Product added'); }
+  catch (e) { toast('Add failed: ' + e.message); }
+}
+async function delProduct(id) {
+  const p = catalog.find(x => x.id === id);
+  if (!confirm('Delete ' + (p ? p.name : id) + '?')) return;
+  try { await api('products?id=eq.' + encodeURIComponent(id), {method:'DELETE'}); await reloadCatalog(); toast('Product deleted'); }
+  catch (e) { toast('Delete failed: ' + e.message); }
+}
+
+/* ---------- Image upload (Supabase Storage bucket: product-images) ---------- */
+function shrink(file, max) {
+  return new Promise((res, rej) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); c.toBlob(b => b ? res(b) : rej(new Error('Image error')), 'image/webp', 0.85); };
+    img.onerror = () => rej(new Error('Could not read that image')); img.src = u;
+  });
+}
+async function uploadImage(file, id, max) {
+  const t = await token(); if (!t) throw new Error('Please sign in again');
+  const blob = await shrink(file, max || 900), path = id + '-' + Date.now() + '.webp';
+  const r = await fetch(SB.url + '/storage/v1/object/product-images/' + path, {method:'POST', headers:{apikey:SB.key, Authorization:'Bearer ' + t, 'Content-Type':'image/webp', 'x-upsert':'true'}, body: blob});
+  if (!r.ok) { let m = ''; try { const j = await r.json(); m = j.message || j.error || ''; } catch (e) {} throw new Error('Upload failed (' + r.status + '): ' + (m || 'storage not set up - run supabase_storage.sql')); }
+  return SB.url + '/storage/v1/object/public/product-images/' + path;
+}
+let newFile = null;
+$('#pFile').addEventListener('change', e => {
+  newFile = e.target.files[0] || null;
+  $('#pImgName').textContent = newFile ? newFile.name : 'Tap to choose a photo (JPG, PNG, WebP)';
+  const pv = $('#pImgPrev'); if (newFile) { pv.src = URL.createObjectURL(newFile); pv.classList.remove('hidden'); $('#pImgIcon').classList.add('hidden'); } else { pv.classList.add('hidden'); $('#pImgIcon').classList.remove('hidden'); }
+});
+function changeImage(id) {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => { if (!inp.files[0]) return; try { toast('Uploading...'); const url = await uploadImage(inp.files[0], id); await api('products?id=eq.' + encodeURIComponent(id), {method:'PATCH', headers:{Prefer:'return=minimal'}, body: JSON.stringify({img: url})}); await reloadCatalog(); toast('Image saved'); } catch (e) { toast(e.message); } };
+  inp.click();
+}
+$('#lgBtn').onclick = login;
+$('#lgPass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('#pAdd').onclick = addProduct;
+$('#pSearch').addEventListener('input', renderProducts);
+document.addEventListener('click', e => {
+  if (e.target.id === 'lgOut') { setSess(null); authUi(); }
+  const d = e.target.closest('[data-delprod]'); if (d) delProduct(d.dataset.delprod);
+  const im = e.target.closest('[data-imgprod]'); if (im) changeImage(im.dataset.imgprod);
+});
+
+/* ---------- Blog articles ---------- */
+let ARTS = [], editId = null, bFile = null, bImg = null;
+const BCAT = {guide:'Buying Guides', flagship:'Flagship Comparisons', deals:'Pricing & Deals', verify:'Genuine Verification', '5g':'5G Networks'};
+const resetBlog = () => {
+  editId = null; bFile = null; bImg = null;
+  ['bTitle','bTag','bRead','bAuthor','bEx','bBody','bFoot','bFile'].forEach(i => $('#' + i).value = '');
+  $('#bFeat').checked = false; $('#bPub').checked = true; $('#bCat').value = 'guide';
+  $('#bImgPrev').classList.add('hidden'); $('#bImgIcon').classList.remove('hidden'); $('#bImgName').textContent = 'Tap to choose a photo (JPG, PNG, WebP)';
+  $('#bgMode').textContent = 'New article'; $('#bCancel').classList.add('hidden'); $('#bSave').textContent = 'Save article';
+};
+function renderArts() {
+  $('#bList').innerHTML = ARTS.map(r => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selart="${esc(r.id)}" ${selA.has(r.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-14 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${r.img ? `<img src="${esc(r.img)}" alt="" class="w-full h-full object-cover"/>` : '<span class="material-symbols-outlined text-secondary text-lg">article</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(r.title)}</p><p class="text-xs text-secondary">${esc(BCAT[r.category] || r.category)}${r.featured ? ' · Featured' : ''}${r.published === false ? ' · <b class="text-danger">Draft (hidden)</b>' : ''}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-editart="${esc(r.id)}" class="text-primary hover:underline text-xs font-bold">Edit</button><button data-delart="${esc(r.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No articles yet. Write your first one above.</p>';
+  updBulkA();
+}
+async function loadArts() {
+  try { ARTS = await (await api('articles?select=*&order=created_at.desc')).json(); selA.forEach(i => { if (!ARTS.some(r => r.id === i)) selA.delete(i); }); renderArts(); }
+  catch (e) { $('#bList').innerHTML = '<p class="p-4 text-xs text-danger text-center">Could not load articles. Run supabase_blog.sql first. (' + esc(e.message).slice(0, 120) + ')</p>'; }
+}
+$('#bFile').addEventListener('change', e => {
+  bFile = e.target.files[0] || null;
+  if (bFile) { $('#bImgPrev').src = URL.createObjectURL(bFile); $('#bImgPrev').classList.remove('hidden'); $('#bImgIcon').classList.add('hidden'); $('#bImgName').textContent = bFile.name; }
+});
+function editArt(id) {
+  const r = ARTS.find(x => x.id === id); if (!r) return;
+  editId = id; bFile = null; bImg = r.img || null;
+  $('#bTitle').value = r.title || ''; $('#bCat').value = r.category || 'guide'; $('#bTag').value = r.tag || ''; $('#bRead').value = r.read_time || '';
+  $('#bAuthor').value = r.author || ''; $('#bEx').value = r.excerpt || ''; $('#bBody').value = r.body || ''; $('#bFoot').value = r.footer || '';
+  $('#bFeat').checked = !!r.featured; $('#bPub').checked = r.published !== false;
+  if (r.img) { $('#bImgPrev').src = r.img; $('#bImgPrev').classList.remove('hidden'); $('#bImgIcon').classList.add('hidden'); $('#bImgName').textContent = 'Current image (choose a file to replace)'; }
+  $('#bgMode').textContent = 'Editing article'; $('#bCancel').classList.remove('hidden'); $('#bSave').textContent = 'Update article';
+  $('#blogAdmin').scrollIntoView({behavior: 'smooth'});
+}
+async function saveArt() {
+  const title = $('#bTitle').value.trim(), excerpt = $('#bEx').value.trim(), body = $('#bBody').value.trim();
+  if (!title || !excerpt || !body) { toast('Title, summary and article text are required'); return; }
+  let id = editId;
+  if (!id) { id = slugify(title) || 'article'; let n = 2; while (ARTS.some(x => x.id === id)) id = slugify(title) + '-' + n++; }
+  try {
+    let img = bImg; if (bFile) { toast('Uploading image...'); img = await uploadImage(bFile, 'blog-' + id, 1400); }
+    const row = {title, excerpt, body, category: $('#bCat').value, tag: $('#bTag').value.trim() || null, read_time: $('#bRead').value.trim() || null, author: $('#bAuthor').value.trim() || null, footer: $('#bFoot').value.trim() || null, featured: $('#bFeat').checked, published: $('#bPub').checked, img};
+    if (editId) await api('articles?id=eq.' + encodeURIComponent(id), {method: 'PATCH', headers: {Prefer: 'return=minimal'}, body: JSON.stringify(row)});
+    else await api('articles', {method: 'POST', headers: {Prefer: 'return=minimal'}, body: JSON.stringify(Object.assign({id}, row))});
+    toast(editId ? 'Article updated' : 'Article published'); resetBlog(); await loadArts();
+  } catch (e) { toast('Save failed: ' + e.message.slice(0, 120)); }
+}
+async function delArt(id) {
+  if (!confirm('Delete this article permanently?')) return;
+  try { await api('articles?id=eq.' + encodeURIComponent(id), {method: 'DELETE'}); if (editId === id) resetBlog(); await loadArts(); toast('Article deleted'); }
+  catch (e) { toast('Delete failed: ' + e.message.slice(0, 120)); }
+}
+$('#bSave').onclick = saveArt; $('#bCancel').onclick = resetBlog;
+document.addEventListener('click', e => {
+  const ed = e.target.closest('[data-editart]'); if (ed) editArt(ed.dataset.editart);
+  const dl = e.target.closest('[data-delart]'); if (dl) delArt(dl.dataset.delart);
+});
+
+
+/* ---------- Bulk delete ---------- */
+let selP = new Set(), selA = new Set(), allP = [];
+function updBulk(prefix, sel, ids) {
+  const n = sel.size, all = ids.length && ids.every(i => sel.has(i));
+  $('#' + prefix + 'Bulk').disabled = !n; $('#' + prefix + 'Bulk').textContent = 'Delete selected (' + n + ')';
+  $('#' + prefix + 'All').checked = all; $('#' + prefix + 'AllTxt').textContent = 'Select all ' + ids.length + (prefix === 'p' && $('#pSearch').value.trim() ? ' matching' : '');
+}
+const updBulkP = () => updBulk('p', selP, allP);
+const updBulkA = () => updBulk('a', selA, ARTS.map(r => r.id));
+const inList = ids => encodeURIComponent('(' + ids.map(i => '"' + i + '"').join(',') + ')');
+async function bulkDelete(table, ids, label) {
+  if (!ids.length) return;
+  if (!confirm('Permanently delete ' + ids.length + ' ' + label + (ids.length === 1 ? '' : 's') + '? This cannot be undone.')) return;
+  try {
+    for (let i = 0; i < ids.length; i += 40) await api(table + '?id=in.' + inList(ids.slice(i, i + 40)), {method: 'DELETE'});
+    toast(ids.length + ' ' + label + (ids.length === 1 ? '' : 's') + ' deleted');
+  } catch (e) { toast('Delete failed: ' + e.message.slice(0, 120)); }
+}
+$('#pBulk').onclick = async () => { await bulkDelete('products', [...selP], 'product'); selP.clear(); await reloadCatalog(); };
+$('#aBulk').onclick = async () => { await bulkDelete('articles', [...selA], 'article'); selA.clear(); if (editId && !ARTS.length) resetBlog(); await loadArts(); };
+$('#pAll').onchange = e => { allP.forEach(i => e.target.checked ? selP.add(i) : selP.delete(i)); renderProducts(); };
+$('#aAll').onchange = e => { ARTS.forEach(r => e.target.checked ? selA.add(r.id) : selA.delete(r.id)); renderArts(); };
+document.addEventListener('change', e => {
+  const p = e.target.closest('[data-selprod]'); if (p) { p.checked ? selP.add(p.dataset.selprod) : selP.delete(p.dataset.selprod); updBulkP(); }
+  const r = e.target.closest('[data-selart]'); if (r) { r.checked ? selA.add(r.dataset.selart) : selA.delete(r.dataset.selart); updBulkA(); }
+});
+
+authUi();
+
+/* mobile drawer */
+const navOpen = on => { $('#navDrawer').classList.toggle('-translate-x-full', !on); $('#navOvl').classList.toggle('hidden', !on); };
+$('#menuBtn').onclick = () => navOpen(true); $('#navClose').onclick = () => navOpen(false); $('#navOvl').onclick = () => navOpen(false);
+/* live updates when an order is placed in another tab */
+window.addEventListener('storage', e => { if (e.key && e.key.startsWith('dai_')) renderAll(); });
+
+/* misc */
+$('#waTop').href = waLink('Hello Daisolve'); $('#waCard').href = waLink('Hello Daisolve');
+$('#yr').textContent = new Date().getFullYear();
+const tick = () => $('#clock').textContent = new Date().toLocaleTimeString('en-KE', {hour:'2-digit', minute:'2-digit'});
+tick(); setInterval(tick, 30000);
+renderAll();
+})();
+</script>
+</body></html>

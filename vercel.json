@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    { "source": "/", "destination": "/home", "permanent": true },
+    { "source": "/index.html", "destination": "/home", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/shop", "destination": "/shop.html" },
+    { "source": "/shop/:product", "destination": "/product-default.html" },
+    { "source": "/brands", "destination": "/brands.html" },
+    { "source": "/brands/:brand", "destination": "/:brand.html" },
+    { "source": "/blog", "destination": "/blog.html" },
+    { "source": "/blog/:article", "destination": "/blog.html" },
+    { "source": "/wishlist", "destination": "/wishlist.html" },
+    { "source": "/account", "destination": "/account.html" },
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ]
+}

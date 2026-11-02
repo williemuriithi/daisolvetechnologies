@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.zip
+.env
+*.log
+# keep SQL with private notes / passwords out of the repo
+*.private.*

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout | Daisolve Technologies Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{"primary-container":"#1769ff","tertiary":"#8b4b00","tertiary-fixed":"#ffdcc2","outline-variant":"#c2c6d8","surface-canvas":"#FFFFFF","on-surface":"#0b1c30","surface-container":"#e5eeff","price-strikethrough":"#94A3B8","mpesa-green":"#43B02A","secondary":"#4f5e7e","danger":"#EF4444","price-primary":"#10213D","background":"#f8f9ff","outline":"#737687","surface-border":"#E2E8F0","surface-subtle":"#F2F7FF","primary":"#0052d1"},
+spacing:{"margin-desktop":"2rem","margin":"1rem"},
+fontSize:{"body-sm":["12px",{lineHeight:"16px"}],"body-md":["14px",{lineHeight:"20px"}],"body-lg":["16px",{lineHeight:"24px"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"700"}],"label-md":["13px",{lineHeight:"18px",fontWeight:"600"}],"headline-sm":["16px",{lineHeight:"22px",fontWeight:"600"}],"headline-md":["20px",{lineHeight:"26px",fontWeight:"700"}],"price-display-mobile":["18px",{lineHeight:"22px",fontWeight:"800"}]}}}}
+</script>
+<style>body{min-height:100dvh;font-family:Inter,sans-serif}</style>
+<link rel="canonical" href="https://www.daisolvetechnologies.co.ke/checkout"/>
+</head>
+<body class="bg-background text-on-surface antialiased text-body-md pb-32 md:pb-16">
+
+<div class="bg-price-primary text-white px-margin py-2 text-center text-label-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm text-mpesa-green" style="font-variation-settings:'FILL' 1;">lock</span>
+<span>Secure checkout • M-PESA, Bank, Card &amp; PayPal • Official Distributor Warranty</span>
+</div>
+
+<header class="bg-white sticky top-0 z-40 shadow-sm border-b border-surface-border">
+<div class="w-full max-w-7xl mx-auto flex items-center justify-between px-margin md:px-margin-desktop h-16">
+<a href="/home" class="flex items-center gap-2" aria-label="Daisolve Technologies home"><img src="/logo.png" alt="Daisolve Technologies" width="140" height="108" class="h-11 md:h-12 w-auto block"/></a>
+<a href="/home" class="flex items-center gap-1 text-label-md text-primary"><span class="material-symbols-outlined text-base">arrow_back</span>Keep shopping</a>
+</div></header>
+
+<div class="bg-white border-b border-surface-border">
+<div class="max-w-3xl mx-auto px-margin py-3.5 flex items-center justify-between">
+<a href="/home" class="flex items-center gap-2 text-outline"><span class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-xs font-bold">1</span><span class="text-label-sm hidden sm:inline">Cart</span></a>
+<div class="h-0.5 w-10 sm:w-16 bg-primary-container"></div>
+<div class="flex items-center gap-2 text-primary font-bold"><span class="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold">2</span><span class="text-label-sm">Details &amp; Payment</span></div>
+<div class="h-0.5 w-10 sm:w-16 bg-surface-border"></div>
+<div class="flex items-center gap-2 text-outline"><span class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-xs font-bold">3</span><span class="text-label-sm hidden sm:inline">Confirm</span></div>
+</div></div>
+
+<main class="max-w-3xl mx-auto px-margin pt-6 space-y-6" id="main">
+
+<section class="bg-white border border-surface-border rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 flex items-center justify-between cursor-pointer hover:bg-surface-subtle" id="toggle">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-subtle flex items-center justify-center text-primary"><span class="material-symbols-outlined">shopping_bag</span></div>
+<div><span class="text-headline-sm text-price-primary">Order Summary (<span id="count">0</span> items)</span><p class="text-body-sm text-secondary">Tap to show or hide</p></div>
+</div>
+<div class="flex items-center gap-2"><span class="text-price-display-mobile text-price-primary" data-total></span><span class="material-symbols-outlined text-secondary transition-transform" id="arrow">expand_more</span></div>
+</div>
+<div class="px-4 pb-4 border-t border-surface-border pt-4 space-y-3" id="summary">
+<div id="items"></div>
+<div class="space-y-1.5 text-body-sm pt-2">
+<div class="flex justify-between text-secondary"><span>Subtotal</span><span class="font-medium text-price-primary" data-total></span></div>
+<div class="flex justify-between text-secondary"><span>Delivery</span><span class="font-semibold text-price-primary" id="fee"></span></div>
+<div class="flex justify-between text-headline-sm text-price-primary pt-2 border-t border-surface-border"><span>Total Payable</span><span class="text-price-display-mobile text-primary" data-total></span></div>
+</div></div>
+</section>
+
+<form id="form" novalidate class="space-y-6">
+<section class="bg-white border border-surface-border rounded-xl p-4 md:p-6 shadow-sm space-y-4">
+<div class="flex items-center gap-2 pb-2 border-b border-surface-border"><span class="w-7 h-7 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold">1</span><h3 class="text-headline-sm text-price-primary">Customer &amp; Delivery Details</h3></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+<div><label class="block text-label-md text-price-primary mb-1" for="name">Full Name *</label>
+<input id="name" name="name" class="w-full px-3.5 py-2.5 bg-white border border-surface-border rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="e.g. Kelvin Mwangi Kimani" autocomplete="name"/></div>
+<div><label class="block text-label-md text-price-primary mb-1" for="phone">Phone / WhatsApp *</label>
+<input id="phone" name="phone" type="tel" class="w-full px-3.5 py-2.5 bg-white border border-surface-border rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="07XX XXX XXX or +country code" autocomplete="tel"/></div>
+</div>
+<div><label class="block text-label-md text-price-primary mb-1" for="email">Email <span class="font-normal text-secondary">(required for PayPal and card)</span></label>
+<input id="email" name="email" type="email" class="w-full px-3.5 py-2.5 bg-white border border-surface-border rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" autocomplete="email"/></div>
+<div class="space-y-2 pt-1"><label class="block text-label-md text-price-primary">Delivery</label><div id="delivery" class="space-y-2"></div></div>
+<div id="addrWrap" class="hidden"><label class="block text-label-md text-price-primary mb-1" for="address">Delivery address *</label>
+<textarea id="address" name="address" rows="2" class="w-full px-3.5 py-2.5 bg-white border border-surface-border rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Town, estate / street, landmark"></textarea></div>
+<div><label class="block text-label-md text-price-primary mb-1" for="notes">Notes <span class="font-normal text-secondary">(optional)</span></label>
+<input id="notes" name="notes" class="w-full px-3.5 py-2 bg-white border border-surface-border rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Colour preference, delivery time, rider instructions"/></div>
+</section>
+
+<section class="bg-white border border-surface-border rounded-xl p-4 md:p-6 shadow-sm space-y-3">
+<div class="flex items-center gap-2 pb-2 border-b border-surface-border"><span class="w-7 h-7 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold">2</span><h3 class="text-headline-sm text-price-primary">Payment Method</h3></div>
+<div id="pay" class="space-y-2"></div>
+<div id="payNote" class="p-3 bg-surface-subtle border border-surface-border rounded-lg text-body-sm text-secondary"></div>
+<div id="refWrap"><label class="block text-label-md text-price-primary mb-1" for="ref">M-PESA confirmation code <span class="font-normal text-secondary">(optional, add it once you have paid)</span></label>
+<input id="ref" name="ref" maxlength="12" class="w-full px-3.5 py-2.5 bg-white border border-surface-border rounded-lg uppercase focus:border-primary focus:ring-1 focus:ring-primary" placeholder="e.g. SH12ABC3DE"/></div>
+</section>
+
+<section class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="bg-surface-subtle border border-surface-border p-3 rounded-lg flex items-center gap-3"><span class="material-symbols-outlined text-primary text-xl">verified</span><div><h5 class="text-label-sm text-price-primary uppercase">Official Warranty</h5><p class="text-[11px] text-secondary">Authorized service centers in Kenya.</p></div></div>
+<div class="bg-surface-subtle border border-surface-border p-3 rounded-lg flex items-center gap-3"><span class="material-symbols-outlined text-mpesa-green text-xl">lock_clock</span><div><h5 class="text-label-sm text-price-primary uppercase">Genuine &amp; Sealed</h5><p class="text-[11px] text-secondary">Brand original factory sealed units.</p></div></div>
+<div class="bg-surface-subtle border border-surface-border p-3 rounded-lg flex items-center gap-3"><span class="material-symbols-outlined text-primary text-xl">published_with_changes</span><div><h5 class="text-label-sm text-price-primary uppercase">Easy Exchange</h5><p class="text-[11px] text-secondary">Instant device exchange policy.</p></div></div>
+</section>
+
+<div class="space-y-3">
+<div id="err" class="hidden bg-red-50 border border-red-200 text-danger text-body-sm rounded-lg p-3"></div>
+<button class="place w-full bg-primary-container text-white py-4 px-6 rounded-xl font-bold text-body-lg shadow-lg hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-3" type="submit"><span class="material-symbols-outlined text-xl">lock</span><span>Place Order • <span data-total></span></span></button>
+<p class="text-center text-[11px] text-secondary">After you place the order, send it to us on WhatsApp to confirm stock and payment.</p>
+</div>
+</form>
+</main>
+
+<div id="bar" class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-surface-border px-margin py-3 shadow-[0_-4px_20px_0_rgba(16,33,61,0.08)] z-30">
+<div class="flex items-center justify-between gap-3">
+<div><span class="text-body-sm text-secondary block">Total Payable</span><span class="text-price-display-mobile text-price-primary" data-total></span></div>
+<button class="place flex-1 bg-primary-container text-white py-3 px-4 rounded-lg font-bold text-label-md active:scale-95 transition-transform" type="button">Place Order</button>
+</div></div>
+
+<footer class="bg-price-primary mt-16"><div class="py-10 px-margin md:px-margin-desktop max-w-7xl mx-auto flex flex-col gap-3">
+<span class="text-headline-md font-bold text-white">Daisolve Technologies</span>
+<p class="text-body-sm text-outline-variant">Genuine smartphones, tablets and accessories • Jamia Shopping Mall, Nairobi CBD</p>
+<div class="flex gap-6 text-label-md text-outline-variant"><a class="hover:text-white" href="/home">Back to Shop</a><a class="hover:text-white" href="/home#tracking">Track Order</a><a class="hover:text-white" target="_blank" rel="noopener" href="https://wa.me/254790835039">WhatsApp</a></div>
+</div></footer>
+
+<script src="/catalog.js"></script><script src="/supabase-catalog.js"></script>
+<script>
+const WA='254790835039', PHONE='+254 790 835039', POCHI='0790835039';
+const PAY={
+  pochi:{label:'M-PESA Pochi la Biashara',icon:'smartphone',d:'Send the amount to our Pochi number and keep the M-PESA message.'},
+  bank:{label:'Bank transfer',icon:'account_balance',d:'Account details are sent on WhatsApp after you order.'},
+  card:{label:'Visa / Mastercard',icon:'credit_card',d:'We send you a secure payment link once the order is placed.'},
+  paypal:{label:'PayPal',icon:'payments',d:'We send a PayPal request to your email address.'},
+  intl:{label:'Other international provider',icon:'public',d:'Tell us your preferred provider in the notes.'}};
+const DELIV={
+  pickup:{label:'Collect at Jamia Shopping Mall, Nairobi CBD',icon:'storefront',d:'Free pickup. Bring your ID and the order ID.',fee:0},
+  nairobi:{label:'Same-day delivery in Nairobi',icon:'bolt',d:'Delivery fee depends on your location; confirmed on WhatsApp before you pay.',fee:null},
+  kenya:{label:'Countrywide dispatch (outside Nairobi)',icon:'local_shipping',d:'Courier fee confirmed on WhatsApp before you pay.',fee:null},
+  intl:{label:'International shipping',icon:'public',d:'Shipping cost confirmed on WhatsApp before you pay.',fee:null}};
+/* fee: number = KSh charged now, null = "confirmed on WhatsApp" */
+
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const kes=n=>'KSh '+Number(n).toLocaleString('en-KE');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('dai_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('dai_'+k,JSON.stringify(v))}catch(e){}}};
+const byId=id=>(window.DAI_CATALOG||[]).find(p=>p.id===id);
+let cart=store.get('cart',{}); const session=store.get('session',null)||{};
+const lines=()=>Object.entries(cart).map(([id,q])=>({p:byId(id),q})).filter(x=>x.p);
+const subtotal=()=>lines().reduce((t,x)=>t+x.p.price*x.q,0);
+const val=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value;
+const saveCart=()=>{store.set('cart',cart);render()};
+
+function payNote(m,total){const t=kes(total);return({
+ pochi:`<p>Send <b>${t}</b> to <b>${PHONE}</b> using <b>M-PESA Pochi la Biashara</b> and keep the M-PESA message. After placing the order, send it on WhatsApp so we can confirm your payment.</p><button type="button" id="copyPochi" class="mt-2 text-xs font-bold text-primary underline">Copy Pochi number</button>`,
+ bank:`<p>Bank transfers are accepted. We will send the account details on WhatsApp as soon as you place the order. Use your order ID as the payment reference.</p>`,
+ card:`<p>Visa and Mastercard are accepted. We will send you a secure payment link for <b>${t}</b> once the order is placed. Never type card details into this page or into WhatsApp chats.</p>`,
+ paypal:`<p>PayPal is accepted. We will send a PayPal payment request to your email, so please add your email above.</p>`,
+ intl:`<p>We accept other international payment providers. Tell us which one you prefer in the notes and we will send instructions.</p>`})[m]}
+
+function render(){
+  const L=lines(), n=L.reduce((a,x)=>a+x.q,0), t=subtotal(), d=DELIV[val('delivery')]||DELIV.pickup;
+  $('#count').textContent=n;
+  $('#items').innerHTML=L.length?L.map(({p,q})=>`
+   <div class="flex items-start gap-3 pb-3 mb-3 border-b border-surface-subtle">
+    <div class="w-16 h-16 rounded-lg border border-surface-border p-1 flex-shrink-0 flex items-center justify-center bg-white">${p.img?`<img class="w-full h-full object-contain" src="${esc(p.img)}" alt="">`:'<span class="material-symbols-outlined text-outline">smartphone</span>'}</div>
+    <div class="flex-1 min-w-0"><h4 class="text-label-md text-price-primary">${esc(p.name)}</h4><p class="text-body-sm text-secondary">${esc(p.spec||'')}</p>
+     <div class="mt-1.5 inline-flex items-center border border-surface-border rounded-lg">
+      <button type="button" class="w-8 h-8 hover:bg-surface-subtle" data-act="dec" data-id="${p.id}" aria-label="Decrease">−</button><span class="w-8 text-center text-label-md">${q}</span>
+      <button type="button" class="w-8 h-8 hover:bg-surface-subtle" data-act="inc" data-id="${p.id}" aria-label="Increase">+</button></div>
+     <button type="button" class="ml-3 text-xs text-secondary underline" data-act="del" data-id="${p.id}">Remove</button></div>
+    <div class="text-right"><span class="font-bold text-price-primary">${kes(p.price*q)}</span>${p.old>p.price?`<span class="block text-body-sm text-price-strikethrough line-through">${kes(p.old*q)}</span>`:''}</div>
+   </div>`).join(''):`<div class="text-center py-6 text-secondary">Your cart is empty. <a class="text-primary font-semibold underline" href="/home">Continue shopping</a></div>`;
+  const fee=d.fee===0?'FREE':d.fee==null?'Confirmed on WhatsApp':kes(d.fee);
+  $('#fee').textContent=fee; $('#fee').className='font-semibold '+(d.fee===0?'text-mpesa-green':'text-price-primary');
+  $$('[data-total]').forEach(e=>e.textContent=kes(t+(d.fee||0)));
+  $$('.place').forEach(b=>{b.disabled=!L.length;b.classList.toggle('opacity-50',!L.length)});
+  const m=val('pay'); $('#payNote').innerHTML=payNote(m,t+(d.fee||0)); $('#refWrap').classList.toggle('hidden',m!=='pochi');
+  $('#addrWrap').classList.toggle('hidden',val('delivery')==='pickup');
+}
+
+const opt=(name,k,v,i,extra='')=>`<label class="flex items-start gap-3 p-3.5 rounded-lg border border-surface-border cursor-pointer transition-all hover:bg-surface-subtle has-[:checked]:border-2 has-[:checked]:border-primary has-[:checked]:bg-surface-subtle">
+ <input ${i===0?'checked':''} class="mt-1 text-primary focus:ring-primary h-4 w-4" type="radio" name="${name}" value="${k}"/>
+ <div class="flex-1"><span class="text-label-md text-price-primary flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-base">${v.icon}</span>${v.label}</span><p class="text-body-sm text-secondary mt-0.5">${v.d}</p></div></label>`;
+$('#delivery').innerHTML=Object.entries(DELIV).map(([k,v],i)=>opt('delivery',k,v,i)).join('');
+$('#pay').innerHTML=Object.entries(PAY).map(([k,v],i)=>opt('pay',k,v,i)).join('');
+$('#name').value=session.name||''; $('#phone').value=session.phone||''; $('#email').value=session.email||'';
+
+$('#toggle').addEventListener('click',()=>{$('#summary').classList.toggle('hidden');$('#arrow').classList.toggle('rotate-180')});
+$('#form').addEventListener('change',render);
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');
+  if(b){const id=b.dataset.id,a=b.dataset.act;
+    if(a==='inc')cart[id]=Math.min(10,(cart[id]||0)+1);
+    if(a==='dec'){cart[id]=(cart[id]||1)-1;if(cart[id]<=0)delete cart[id]}
+    if(a==='del')delete cart[id];
+    saveCart();return}
+  if(e.target.closest('#copyPochi')){navigator.clipboard&&navigator.clipboard.writeText(POCHI);e.target.textContent='Copied ✓'}
+});
+
+const okPhone=v=>{const d=String(v).replace(/\D/g,'');return d.length>=9&&d.length<=15};
+const okEmail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+function fail(id,msg){const e=$('#err');e.textContent=msg;e.classList.remove('hidden');$('#'+id).focus();e.scrollIntoView({behavior:'smooth',block:'center'});return false}
+
+function orderText(o){return `*New order ${o.id}*\n`+o.items.map(i=>`• ${i.name} x${i.qty} – ${kes(i.price*i.qty)}`).join('\n')+
+ `\n*Total:* ${kes(o.total)}\n*Name:* ${o.customer.name}\n*Phone:* ${o.customer.phone}`+(o.customer.email?`\n*Email:* ${o.customer.email}`:'')+
+ `\n*Delivery:* ${DELIV[o.delivery].label}`+(o.address?`\n*Address:* ${o.address}`:'')+`\n*Payment:* ${PAY[o.pay].label}`+
+ (o.ref?`\n*M-PESA code:* ${o.ref}`:'')+(o.notes?`\n*Notes:* ${o.notes}`:'')}
+
+function placeOrder(e){
+  e&&e.preventDefault(); $('#err').classList.add('hidden');
+  const f=$('#form'), v=n=>f.elements[n].value.trim(), m=val('pay'), d=val('delivery'), L=lines();
+  if(!L.length)return fail('name','Your cart is empty.');
+  if(v('name').length<2)return fail('name','Enter your full name.');
+  if(!okPhone(v('phone')))return fail('phone','Enter a valid phone number.');
+  if(v('email')&&!okEmail(v('email')))return fail('email','Enter a valid email address.');
+  if((m==='paypal'||m==='card')&&!v('email'))return fail('email','Email is required for this payment method.');
+  if(d!=='pickup'&&v('address').length<4)return fail('address','Enter where we should deliver.');
+  const o={id:'DAI-'+Date.now().toString(36).slice(-5).toUpperCase()+Math.floor(Math.random()*90+10),date:new Date().toISOString(),
+    items:L.map(({p,q})=>({id:p.id,name:p.name,price:p.price,qty:q})),total:subtotal()+(DELIV[d].fee||0),
+    customer:{name:v('name'),phone:v('phone'),email:v('email')},delivery:d,address:d==='pickup'?'':v('address'),pay:m,
+    ref:m==='pochi'?v('ref').toUpperCase():'',notes:v('notes'),user:session.id||null};
+  const orders=store.get('orders',[]); orders.unshift(o); store.set('orders',orders);
+  cart={}; store.set('cart',cart);
+  done(o);
+}
+$('#form').addEventListener('submit',placeOrder);
+$('#bar .place').addEventListener('click',()=>$('#form').requestSubmit());
+
+function done(o){
+  $('#bar').remove(); scrollTo({top:0});
+  $('#main').innerHTML=`<section class="bg-white border border-surface-border rounded-xl shadow-sm p-6 text-center">
+   <div class="w-14 h-14 mx-auto rounded-full bg-mpesa-green/10 text-mpesa-green flex items-center justify-center"><span class="material-symbols-outlined text-4xl">check_circle</span></div>
+   <h3 class="mt-3 text-headline-md text-price-primary">Order placed</h3>
+   <p class="text-body-sm text-secondary mt-1">Order ID <b class="text-price-primary">${o.id}</b></p>
+   <div class="mt-4 text-left p-3 bg-surface-subtle border border-surface-border rounded-lg text-body-sm space-y-1">
+    ${o.items.map(i=>`<div class="flex justify-between gap-3"><span class="text-secondary">${esc(i.name)} × ${i.qty}</span><span class="font-semibold">${kes(i.price*i.qty)}</span></div>`).join('')}
+    <div class="flex justify-between pt-2 border-t border-surface-border font-bold text-price-primary"><span>Total</span><span>${kes(o.total)}</span></div></div>
+   <div class="mt-3 text-left p-3 bg-surface-subtle border border-surface-border rounded-lg text-body-sm text-secondary">${payNote(o.pay,o.total)}</div>
+   <p class="mt-3 text-body-sm text-secondary">Last step: send this order to us on WhatsApp so we can confirm stock and payment.</p>
+   <a class="mt-3 h-12 bg-mpesa-green text-white rounded-lg text-label-md font-bold flex items-center justify-center gap-2 hover:opacity-90" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent(orderText(o))}"><span class="material-symbols-outlined text-lg">chat</span>Send order on WhatsApp</a>
+   <div class="mt-2 grid grid-cols-2 gap-2"><a class="h-10 border border-surface-border rounded-lg text-label-md font-bold text-price-primary hover:bg-surface-subtle flex items-center justify-center" href="/home#tracking">Track order</a><a class="h-10 border border-surface-border rounded-lg text-label-md font-bold text-price-primary hover:bg-surface-subtle flex items-center justify-center" href="/home">Keep shopping</a></div>
+  </section>`;
+}
+render();
+</script>
+</body></html>

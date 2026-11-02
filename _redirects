@@ -1,0 +1,14 @@
+# Daisolve clean URLs for Netlify. Upload with the site.
+/                         /home                  301
+/index.html               /home                  301
+/home                     /index.html            200
+/shop                     /shop.html             200
+/shop/:product            /product-default.html  200
+/brands                   /brands.html           200
+/brands/:brand            /:brand.html           200
+/blog                     /blog.html             200
+/blog/:article            /blog.html             200
+/wishlist                 /wishlist.html         200
+/account                  /account.html          200
+/checkout                 /checkout.html         200
+/admin                    /admin.html            200

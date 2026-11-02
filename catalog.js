@@ -1,0 +1,1 @@
+window.DAI_CATALOG = [];

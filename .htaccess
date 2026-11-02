@@ -1,0 +1,33 @@
+# Daisolve clean URLs (Apache / cPanel). Upload to the site root (public_html).
+Options -MultiViews
+RewriteEngine On
+
+# 1) Always use https + www
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^ https://www.daisolvetechnologies.co.ke%{REQUEST_URI} [L,R=301]
+
+# 2) Root goes to /home
+RewriteRule ^$ /home [L,R=301]
+
+# 3) Old .html addresses redirect to the clean ones (only for the original request, avoids loops)
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?]
+RewriteRule ^ /home [L,R=301]
+RewriteCond %{THE_REQUEST} \s/+product-default\.html[\s?]
+RewriteRule ^ /shop [L,R=301]
+RewriteCond %{THE_REQUEST} \s/+(samsung|apple|nokia|redmi|realmi|oppo|tecno|infinix|itel|villaon|vivo|honor|zte|modio|elimutab)\.html[\s?]
+RewriteRule ^ /brands/%1 [L,R=301]
+RewriteCond %{THE_REQUEST} \s/+(shop|brands|blog|wishlist|account|checkout|admin)\.html[\s?]
+RewriteRule ^ /%1 [L,R=301]
+
+# 4) Clean URL -> real file (internal, the address bar does not change)
+RewriteRule ^home/?$ index.html [L]
+RewriteRule ^shop/?$ shop.html [L]
+RewriteRule ^shop/[^/]+/?$ product-default.html [L]
+RewriteRule ^brands/?$ brands.html [L]
+RewriteRule ^brands/(samsung|apple|nokia|redmi|realmi|oppo|tecno|infinix|itel|villaon|vivo|honor|zte|modio|elimutab)/?$ $1.html [L]
+RewriteRule ^blog/?$ blog.html [L]
+RewriteRule ^blog/[^/]+/?$ blog.html [L]
+RewriteRule ^(wishlist|account|checkout|admin)/?$ $1.html [L]
+
+ErrorDocument 404 /404.html

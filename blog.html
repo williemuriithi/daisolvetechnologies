@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Daisolve Technologies - Blog &amp; Tech Insights Kenya</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{sans:["Inter","sans-serif"]},colors:{primary:"#0052d1","primary-container":"#1769ff","price-primary":"#10213D","mpesa-green":"#43B02A","surface-subtle":"#F2F7FF","surface-border":"#E2E8F0",secondary:"#4f5e7e","on-surface-variant":"#424655","tertiary-container":"#af6000",tertiary:"#8b4b00",danger:"#EF4444"}}}}
+</script>
+<style>
+.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
+.ms{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;display:inline-block;font-size:24px;letter-spacing:normal;text-transform:none;white-space:nowrap;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.ms.fill{font-variation-settings:'FILL' 1}
+html{scroll-behavior:smooth}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</head>
+<body class="font-sans bg-[#f8f9ff] text-[#0b1c30] antialiased pb-24 md:pb-12">
+
+<aside class="bg-price-primary text-white py-2 px-4 text-xs flex items-center justify-between md:px-8">
+  <div class="flex items-center gap-2 mx-auto md:mx-0">
+    <span class="w-2 h-2 rounded-full bg-mpesa-green animate-pulse"></span>
+    <span class="font-medium tracking-wide">Same-Day Nairobi Delivery | Lipa na M-PESA Verified | Official Kenyan Warranty</span>
+  </div>
+  <div class="hidden md:flex items-center gap-4 font-semibold">
+    <a class="hover:underline flex items-center gap-1" href="tel:+254790835039"><span class="ms !text-[14px]">call</span> Hotline: 0790 835 039</a>
+    <span class="opacity-40">|</span>
+    <a class="hover:underline flex items-center gap-1 text-mpesa-green font-bold" target="_blank" rel="noopener" href="https://wa.me/254790835039?text=Hello%20Daisolve%2C%20I%27d%20like%20to%20place%20an%20order"><span class="ms !text-[14px]">chat</span> WhatsApp Orders</a>
+  </div>
+</aside>
+
+<header class="bg-white shadow-sm sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 h-16">
+    <div class="flex items-center gap-3">
+      <button id="btnMenu" aria-label="Open menu" class="md:hidden p-2 text-primary hover:bg-surface-subtle active:scale-95 rounded-lg"><span class="ms">menu</span></button>
+      <a href="/home" class="flex items-center gap-2" aria-label="Daisolve Technologies home"><img src="/logo.png" alt="Daisolve Technologies" width="140" height="108" class="h-11 md:h-12 w-auto block"/><span class="hidden sm:inline-block text-[10px] uppercase tracking-wider bg-surface-subtle text-primary font-extrabold px-1.5 py-0.5 rounded border border-surface-border">Hub</span></a>
+    </div>
+    <nav class="hidden md:flex items-center gap-4 text-[13px] font-semibold" id="navMain"></nav>
+    <div class="flex items-center gap-1 sm:gap-2">
+      <button id="btnSearch" aria-label="Search" class="p-2 text-primary hover:bg-surface-subtle active:scale-95 rounded-lg"><span class="ms">search</span></button>
+      <button id="btnFavs" aria-label="Wishlist" class="p-2 text-secondary hover:bg-surface-subtle active:scale-95 rounded-lg relative"><span class="ms">favorite</span><span id="favCount" class="hidden absolute top-1 right-1 w-4 h-4 rounded-full bg-danger text-white text-[10px] font-bold items-center justify-center">0</span></button>
+      <button id="btnCart" aria-label="Shopping bag" class="p-2 text-primary hover:bg-surface-subtle active:scale-95 rounded-lg relative"><span class="ms">shopping_bag</span><span id="cartCount" class="hidden absolute top-1 right-1 w-4 h-4 rounded-full bg-tertiary-container text-white text-[10px] font-bold items-center justify-center">0</span></button>
+    </div>
+  </div>
+</header>
+
+<section class="bg-white px-4 py-3 border-b border-surface-border md:px-8">
+  <div class="relative w-full max-w-7xl mx-auto">
+    <span class="ms absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-lg pointer-events-none">search</span>
+    <input id="q" type="text" placeholder="Search phone specs, IMEI verify, prices..." class="w-full pl-9 pr-9 py-2 text-sm rounded-lg bg-surface-subtle border border-surface-border focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none"/>
+    <button id="qClear" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700" aria-label="Clear search"><span class="ms !text-lg">close</span></button>
+  </div>
+</section>
+
+<main id="top" class="w-full max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-12">
+  <section class="mb-6">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-[11px] font-bold tracking-wider uppercase bg-surface-subtle text-primary px-2.5 py-1 rounded-full border border-surface-border">Kenyan Tech Ecosystem</span>
+      <span class="text-[11px] text-mpesa-green font-bold flex items-center gap-1"><span class="ms !text-xs">verified</span> Verified Insights</span>
+    </div>
+    <h1 class="text-[28px] md:text-[40px] leading-tight font-extrabold text-price-primary tracking-tight mb-2">Daisolve Tech Insights &amp; Smartphone Buyer Guides</h1>
+    <p class="text-sm text-on-surface-variant max-w-3xl leading-relaxed">Expert phone comparisons, Kenya market price trends, M-PESA financing tips, and genuine warranty guides curated for smart buyers in Nairobi, Mombasa, Kisumu &amp; beyond.</p>
+  </section>
+
+  <div id="detail" class="hidden"></div>
+  <nav id="pills" aria-label="Topic filters" class="mb-8 flex items-center gap-2 overflow-x-auto no-scrollbar py-1"></nav>
+
+  <section id="featWrap" class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+    <article id="featArt" class="lg:col-span-8 bg-white rounded-xl border border-surface-border overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+      <div class="relative w-full aspect-[16/9] md:aspect-[21/9] bg-gradient-to-br from-price-primary via-primary to-primary-container flex items-center justify-center">
+        <span class="ms fill text-white/25 !text-[120px]">smartphone</span>
+        <div class="absolute top-3 left-3 flex flex-wrap gap-2">
+          <span class="bg-tertiary-container text-white text-[11px] px-2.5 py-1 rounded-md uppercase font-bold tracking-wider">Flagship Face-Off</span>
+          <span class="bg-price-primary text-white text-[11px] px-2.5 py-1 rounded-md font-semibold flex items-center gap-1"><span class="ms !text-[13px]">verified</span> Kenya 2025 Edition</span>
+        </div>
+      </div>
+      <div class="p-5 md:p-6 flex flex-col flex-grow">
+        <div class="flex items-center gap-3 text-xs text-secondary mb-2"><span>May 2025</span><span>•</span><span>7 min read</span><span>•</span><span class="text-primary font-bold">By Tech Editor Brian O.</span></div>
+        <h2 class="text-[22px] md:text-3xl font-bold text-price-primary tracking-tight mb-3">Samsung Galaxy S24 Ultra vs iPhone 15 Pro Max: Which Flagship is Best for Kenyans in 2025?</h2>
+        <p class="text-sm text-on-surface-variant leading-relaxed mb-4">We tested both giants across Safaricom 5G speeds, outdoor visibility in sunny Nairobi weather, battery longevity on mobile data, and local resale value. Find out which superphone gives you maximum value for your Kenyan Shillings before you swipe your card.</p>
+        <div class="mt-auto pt-3 border-t border-surface-border flex items-center justify-between gap-2">
+          <span class="text-[11px] text-mpesa-green font-bold bg-surface-subtle px-2 py-0.5 rounded border border-surface-border">Samsung Care+ &amp; Apple Kenya Validated</span>
+          <button data-act="open" data-id="0" class="inline-flex items-center gap-1.5 text-[13px] font-bold text-primary hover:text-primary-container">Read Full Guide <span class="ms !text-base">arrow_forward</span></button>
+        </div>
+      </div>
+    </article>
+
+    <aside id="featSide" class="lg:col-span-4 flex flex-col gap-4">
+      <div class="bg-surface-subtle rounded-xl p-5 border border-surface-border">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-semibold text-price-primary flex items-center gap-1.5"><span class="ms text-primary">trending_up</span> Nairobi Price Radar</h3>
+          <span class="text-[10px] font-bold text-mpesa-green uppercase bg-white px-2 py-0.5 rounded border border-surface-border">Live KSh</span>
+        </div>
+        <p class="text-xs text-on-surface-variant mb-4">Recent smartphone customs clearance and distributor price adjustments. Tap + to add to your bag.</p>
+        <ul id="radar" class="space-y-3"></ul>
+      </div>
+      <div class="bg-price-primary text-white rounded-xl p-5 shadow-md">
+        <div class="flex items-center gap-2 mb-2"><span class="ms text-mpesa-green">payments</span><span class="text-[11px] font-bold uppercase tracking-wider text-blue-100">Device Financing</span></div>
+        <h4 class="text-base font-bold mb-1">Need to Upgrade? Pay in M-PESA Installments</h4>
+        <p class="text-xs text-blue-100/80 mb-4">Learn how Daisolve partners with Aspira, Mkopa, and Safaricom Lipa Pole Pole to finance authentic smartphones with zero hidden interest.</p>
+        <button id="finBtn" data-act="open" data-id="" class="hidden inline-flex items-center justify-center gap-2 bg-mpesa-green text-white text-[13px] py-2.5 px-4 rounded-lg font-bold hover:opacity-95 active:scale-95">Read Financing Guide <span class="ms !text-sm">arrow_outward</span></button>
+      </div>
+    </aside>
+  </section>
+
+  <section id="articles" class="mb-14 scroll-mt-20">
+    <div class="flex items-center justify-between mb-6 pb-2 border-b border-surface-border">
+      <div>
+        <h2 class="text-[22px] md:text-3xl font-bold text-price-primary tracking-tight">Latest Tech Reviews &amp; Advisory</h2>
+        <p class="text-xs text-secondary">Practical buying intelligence written for Kenya's everyday tech lifestyle</p>
+      </div>
+      <button id="btnSaved" class="text-[11px] font-bold text-primary flex items-center gap-1 hover:underline"><span class="ms !text-base">bookmark</span> Saved articles</button>
+      <span id="count" class="hidden md:block text-[11px] text-secondary font-semibold"></span>
+    </div>
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <p id="empty" class="hidden text-center text-secondary py-12">No articles match your search. <button id="reset" class="text-primary font-bold underline">Reset filters</button></p>
+  </section>
+
+  <section class="bg-surface-subtle rounded-xl border border-surface-border p-5 mb-14">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+      <div class="flex items-center gap-3"><span class="ms text-primary">verified_user</span><div><p class="text-[13px] font-semibold text-price-primary">100% Genuine Devices</p><p class="text-secondary">Official Brand Warranties</p></div></div>
+      <div class="flex items-center gap-3"><span class="ms text-mpesa-green">local_shipping</span><div><p class="text-[13px] font-semibold text-price-primary">Same-Day Dispatch</p><p class="text-secondary">Nairobi &amp; Major Towns</p></div></div>
+      <div class="flex items-center gap-3"><span class="ms text-mpesa-green">point_of_sale</span><div><p class="text-[13px] font-semibold text-price-primary">Lipa na M-PESA</p><p class="text-secondary">Pay on Delivery Available</p></div></div>
+      <div class="flex items-center gap-3"><span class="ms text-primary">published_with_changes</span><div><p class="text-[13px] font-semibold text-price-primary">7-Day Swap Policy</p><p class="text-secondary">Immediate Replacements</p></div></div>
+    </div>
+  </section>
+
+  <section class="bg-price-primary text-white rounded-2xl p-6 md:p-10 mb-12 relative overflow-hidden">
+    <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+    <div class="max-w-2xl relative z-10">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold mb-3"><span class="ms !text-sm text-mpesa-green">notifications_active</span> Never Pay Full Price</div>
+      <h2 class="text-[22px] md:text-3xl font-bold mb-2">Get Weekly Smartphone Deals &amp; Buying Tips</h2>
+      <p class="text-sm text-blue-100/80 mb-6">Join 18,000+ Kenyan gadget enthusiasts. Receive verified flash sale codes, price drop notifications, and trade-in bonus updates directly to your inbox every Thursday morning.</p>
+      <form id="news" class="flex flex-col sm:flex-row gap-3 max-w-lg" novalidate>
+        <input id="newsEmail" type="email" required placeholder="Enter your email (e.g. brian@gmail.com)" class="flex-grow px-4 py-3 rounded-lg text-[#0b1c30] bg-white text-sm outline-none focus:ring-2 focus:ring-primary-container border-0"/>
+        <button type="submit" class="px-6 py-3 rounded-lg bg-primary-container hover:bg-primary text-white text-[13px] font-bold active:scale-95 shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">Subscribe Free <span class="ms !text-sm">send</span></button>
+      </form>
+      <p id="newsMsg" class="text-xs text-blue-100/70 mt-3">No spam ever. Unsubscribe anytime. Your details are never shared with third parties.</p>
+    </div>
+  </section>
+
+  <section class="mb-8">
+    <h3 class="text-base font-bold text-price-primary mb-3 flex items-center gap-2"><span class="ms text-primary">tag</span> Trending Kenyan Tech Tags</h3>
+    <div id="tags" class="flex flex-wrap gap-2"></div>
+  </section>
+</main>
+
+<footer class="bg-price-primary text-blue-200 w-full border-t border-secondary">
+  <div class="py-12 px-4 md:px-8 max-w-7xl mx-auto flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-white/20">
+      <div>
+        <span class="text-xl font-bold text-white tracking-tight block">Daisolve Technologies</span>
+        <p class="text-xs text-slate-300 max-w-md mt-1">Kenya's dependable destination for brand new authentic smartphones, certified manufacturer warranties, and reliable delivery across all 47 counties.</p>
+      </div>
+      <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
+        <div class="w-8 h-8 rounded-full bg-mpesa-green flex items-center justify-center text-white font-bold text-xs">M</div>
+        <div class="text-xs"><p class="font-bold text-white">Lipa na M-PESA Verified</p><p class="text-slate-300">Buy Goods Till / Paybill Supported</p></div>
+      </div>
+    </div>
+    <nav class="flex flex-wrap gap-x-6 gap-y-3 text-[13px] font-semibold">
+      <button data-act="info" data-k="warranty" class="text-slate-300 hover:text-white">Warranty Policy</button>
+      <button data-act="info" data-k="delivery" class="text-slate-300 hover:text-white">Same-Day Nairobi Delivery</button>
+      <button data-act="info" data-k="tradein" class="text-slate-300 hover:text-white">Trade-In Program</button>
+      <button data-act="info" data-k="terms" class="text-slate-300 hover:text-white">Terms of Service</button>
+      <a target="_blank" rel="noopener" href="https://wa.me/254790835039?text=Hello%20Daisolve%2C%20I%27d%20like%20to%20place%20an%20order" class="text-white underline">WhatsApp Orders</a>
+    </nav>
+    <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-300 gap-2">
+      <p>© 2025 Daisolve Technologies Kenya. Genuine Gadgets. Lipa na M-PESA Verified.</p>
+      <p>Built for Speed &amp; Trust in Nairobi, Kenya.</p>
+    </div>
+  </div>
+</footer>
+
+<nav id="bottomNav" aria-label="Bottom Navigation" class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-white border-t border-surface-border shadow-[0_-4px_20px_0_rgba(16,33,61,0.08)] h-[60px] flex items-center justify-around px-2"></nav>
+
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true">
+  <div id="backdrop" class="absolute inset-0 bg-price-primary/60"></div>
+  <div class="absolute inset-x-0 bottom-0 md:inset-0 md:flex md:items-center md:justify-center pointer-events-none">
+    <div class="pointer-events-auto bg-white w-full md:max-w-xl rounded-t-2xl md:rounded-2xl shadow-2xl max-h-[88vh] flex flex-col">
+      <div class="flex items-center justify-between px-5 py-3 border-b border-surface-border">
+        <h3 id="mTitle" class="font-bold text-price-primary text-base clamp2 pr-2"></h3>
+        <button id="mClose" aria-label="Close" class="p-1 rounded-lg hover:bg-surface-subtle"><span class="ms">close</span></button>
+      </div>
+      <div id="mBody" class="p-5 overflow-y-auto text-sm text-on-surface-variant leading-relaxed"></div>
+    </div>
+  </div>
+</div>
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-8 z-[70] bg-price-primary text-white text-sm px-4 py-2 rounded-lg shadow-lg hidden"></div>
+
+<script src="/catalog.js"></script><script src="/supabase-catalog.js"></script><script src="/supabase-articles.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s), WA='254790835039';
+const wa=t=>`https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
+
+const kes=n=>'KSh '+n.toLocaleString('en-KE');
+
+const CATS=[['all','All Articles'],['guide','Buying Guides'],['flagship','Flagship Comparisons'],['deals','Pricing & Deals'],['verify','Genuine Phone Verification'],['5g','5G Networks Kenya']];
+let A=[];
+const CAT=window.DAI_CATALOG||[];
+const prod=id=>CAT.find(c=>c.id===id);
+const PRODUCT_PAGE='/shop';
+const P=CAT.slice(0,3).map(c=>({id:c.id,n:c.name,s:c.sub||c.corner||'Official warranty',p:c.price,d:c.old>c.price?'-'+Math.round((c.old-c.price)/c.old*100)+'% off':'Stable'}));
+const BRANDS=[...new Set(CAT.map(c=>c.brand))];
+const TAGS=['GalaxyS24','iPhoneKenya','5GKenya','LipaPolePole','BudgetPhones','Safaricom5G','CarlcareKenya','RedmiNote13','NairobiPhonePrices'];
+const TAGQ={GalaxyS24:'Galaxy',iPhoneKenya:'iPhone',LipaPolePole:'Pole',Safaricom5G:'5G',CarlcareKenya:'Carlcare',RedmiNote13:'Budget',NairobiPhonePrices:'KSh',BudgetPhones:'Budget','5GKenya':'5G'};
+const INFO={
+warranty:['Warranty Policy','<p>All devices are brand new with the manufacturer\'s official Kenyan warranty (typically 12–24 months). Keep your receipt and warranty card. Physical or liquid damage is not covered. 7-day swap is available for faulty devices.</p>'],
+delivery:['Same-Day Nairobi Delivery','<p>Orders confirmed before the daily cut-off are delivered within Nairobi the same day. Other towns are dispatched the same day via courier to all 47 counties. Pay on delivery with Lipa na M-PESA is available.</p>'],
+tradein:['Trade-In Program','<p>Bring your old phone and get a quote toward your next purchase. Send the model, storage and condition on WhatsApp for a quick estimate.</p><a class="inline-block mt-3 bg-mpesa-green text-white font-bold px-4 py-2 rounded-lg" target="_blank" rel="noopener" href="'+wa('Hello Daisolve, I want a trade-in quote for my phone.')+'">Get a quote on WhatsApp</a>'],
+terms:['Terms of Service','<p>By ordering you agree to provide accurate delivery and payment details, to inspect items on delivery, and to follow the warranty and swap conditions. Prices and stock may change without notice. Contact us for the full terms.</p>']
+};
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let cart=store.get('dai_cart',{}), favs=store.get('dai_blog_saved',[]), wish=store.get('dai_wish',[]), cat='all', q='';
+
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add('hidden'),2200)}
+function openModal(title,html){$('#mTitle').textContent=title;$('#mBody').innerHTML=html;$('#modal').classList.remove('hidden');document.body.style.overflow='hidden'}
+function closeModal(){$('#modal').classList.add('hidden');document.body.style.overflow='';view=null}
+let view=null;
+function badges(){
+  const c=Object.values(cart).reduce((a,b)=>a+b,0);
+  const cc=$('#cartCount');cc.textContent=c;cc.classList.toggle('hidden',!c);cc.classList.toggle('flex',!!c);
+  const fc=$('#favCount');fc.textContent=wish.length;fc.classList.toggle('hidden',!wish.length);fc.classList.toggle('flex',!!wish.length);
+}
+function save(){store.set('dai_cart',cart);store.set('dai_blog_saved',favs);badges()}
+
+/* Navigation */
+const NAV=[['Home','/home'],['Shop','/shop'],['Blogs','/blog'],['Blog','#articles'],['Track Order','/home#tracking']];
+$('#navMain').innerHTML=NAV.map(n=>`<a href="${n[1]}" class="${n[0]==='Blog'?'text-primary font-bold':'text-on-surface-variant'} hover:bg-surface-subtle px-3 py-1.5 rounded">${n[0]}</a>`).join('');
+const BN=[['/home','home','Home'],['/shop','storefront','Shop'],['/brands','devices','Brands'],['/wishlist','favorite','Wishlist'],['/account','person','Account']];
+$('#bottomNav').innerHTML=BN.map(b=>b[0].charAt(0)==='/'?`<a href="${b[0]}" class="flex flex-col items-center justify-center text-secondary hover:text-primary active:scale-95 flex-1"><span class="ms">${b[1]}</span><span class="text-[11px] font-bold mt-0.5">${b[2]}</span></a>`:`<button data-act="nav" data-k="${b[0]}" class="flex flex-col items-center justify-center text-secondary hover:text-primary active:scale-95 flex-1"><span class="ms">${b[1]}</span><span class="text-[11px] font-bold mt-0.5">${b[2]}</span></button>`).join('');
+$('#tags').innerHTML=TAGS.map(t=>`<button data-act="tag" data-k="${t}" class="px-3 py-1.5 bg-white border border-surface-border text-[13px] font-semibold rounded-lg hover:border-primary hover:text-primary">#${t}</button>`).join('');
+
+/* Radar */
+$('#radar').innerHTML=P.map(p=>`<li class="flex items-center justify-between gap-2 bg-white p-2.5 rounded-lg border border-surface-border"><div class="min-w-0"><a href="${PRODUCT_PAGE}/${p.id}" class="text-[13px] font-semibold text-price-primary hover:text-primary block">${p.n}</a><p class="text-[11px] text-secondary">${p.s}</p></div><div class="text-right shrink-0"><p class="text-[13px] font-bold text-price-primary">${kes(p.p)}</p><span class="text-[11px] font-bold ${p.d==='Stable'?'text-on-surface-variant':'text-mpesa-green'}">${p.d}</span></div><button data-act="add" data-id="${p.id}" aria-label="Add ${p.n} to cart" class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center hover:bg-primary active:scale-90"><span class="ms !text-lg">add</span></button></li>`).join('');
+
+/* Pills + grid */
+function pills(){$('#pills').innerHTML=CATS.map(c=>`<button data-act="cat" data-k="${c[0]}" class="whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-semibold border ${cat===c[0]?'bg-primary-container text-white border-primary-container shadow-sm':'bg-white text-secondary border-surface-border hover:bg-surface-subtle'}">${c[1]}</button>`).join('')}
+function card(a){const f=favs.includes(a.id);return `<article class="bg-white rounded-xl border border-surface-border overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
+<div class="relative aspect-video bg-gradient-to-br ${a.grad} flex items-center justify-center overflow-hidden">${a.img?`<img src="${a.img}" alt="" class="absolute inset-0 w-full h-full object-cover"/>`:`<span class="ms fill text-white/30 !text-7xl">${a.icon}</span>`}<span class="absolute top-2.5 left-2.5 bg-price-primary text-white text-[11px] px-2 py-0.5 rounded font-bold">${a.tag}</span>
+<button data-act="fav" data-id="${a.id}" aria-label="Save article" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center ${f?'text-danger':'text-secondary'} hover:scale-110"><span class="ms ${f?'fill':''} !text-xl">favorite</span></button></div>
+<div class="p-5 flex flex-col flex-grow"><p class="text-[11px] text-secondary mb-2 font-semibold">${CATS.find(c=>c[0]===a.cat)[1]} • ${a.read} read</p>
+<h3 class="text-base font-bold text-price-primary mb-2 clamp2">${a.title}</h3><p class="text-xs text-on-surface-variant clamp3 mb-4">${a.ex}</p>
+<div class="mt-auto pt-3 border-t border-surface-border flex items-center justify-between"><span class="text-[11px] font-bold text-mpesa-green">${a.foot||''}</span><button data-act="open" data-id="${a.id}" class="text-[11px] font-bold text-primary flex items-center gap-1 hover:underline">Read Guide <span class="ms !text-[13px]">chevron_right</span></button></div></div></article>`}
+function render(){
+  pills();
+  const filtered=!!q||cat!=='all', ql=q.toLowerCase();
+  const list=A.filter(a=>(cat==='all'||a.cat===cat)&&(!ql||(a.title+a.ex+a.tag+a.bodyArr.join(' ')+(a.foot||'')).toLowerCase().includes(ql))&&(filtered||!a.feat));
+  $('#grid').innerHTML=list.map(card).join('');
+  $('#empty').classList.toggle('hidden',!!list.length);
+  $('#count').textContent=list.length+' In-Depth Article'+(list.length===1?'':'s');
+  $('#featWrap').classList.toggle('hidden',filtered);
+  $('#qClear').classList.toggle('hidden',!q);
+}
+
+/* Views */
+function showArticle(id){location.href='/blog/'+encodeURIComponent(id)}
+function showCart(){
+  const ids=Object.keys(cart).filter(i=>prod(i));view='cart';
+  if(!ids.length){openModal('Your Cart','<p>Your cart is empty. Add phones from the Price Radar or the shop.</p><a href="/shop" class="inline-block mt-3 px-4 py-2 rounded-lg bg-primary-container text-white font-bold text-[13px]">Browse phones</a>');return}
+  let tot=0,msg='Hello Daisolve, I would like to order:\n';
+  const rows=ids.map(i=>{const p=prod(i),n=cart[i];tot+=p.price*n;msg+=`• ${p.name} x${n} – ${kes(p.price*n)}\n`;
+    return `<li class="flex items-center justify-between gap-2 py-3 border-b border-surface-border"><div class="min-w-0"><a href="${PRODUCT_PAGE}/${p.id}" class="font-semibold text-price-primary hover:text-primary">${p.name}</a><p class="text-xs">${kes(p.price)}</p></div>
+    <div class="flex items-center gap-2"><button data-act="dec" data-id="${i}" class="w-7 h-7 rounded-full border border-surface-border font-bold">−</button><span class="w-5 text-center font-bold">${n}</span><button data-act="add" data-id="${i}" class="w-7 h-7 rounded-full border border-surface-border font-bold">+</button><button data-act="del" data-id="${i}" aria-label="Remove" class="text-danger ml-1"><span class="ms !text-xl">delete</span></button></div></li>`}).join('');
+  msg+=`Total: ${kes(tot)}\nPlease confirm availability.`;
+  openModal('Your Cart',`<ul>${rows}</ul><p class="flex justify-between font-bold text-price-primary text-base mt-4"><span>Subtotal</span><span>${kes(tot)}</span></p>
+  <a href="/checkout" class="mt-4 flex items-center justify-center gap-2 bg-primary-container text-white font-bold py-3 rounded-lg">Proceed to Checkout</a>
+  <a target="_blank" rel="noopener" href="${wa(msg)}" class="mt-2 flex items-center justify-center gap-2 border border-mpesa-green text-mpesa-green font-bold py-3 rounded-lg">Order on WhatsApp</a>
+  <button data-act="clear" class="mt-2 w-full text-xs text-secondary underline">Clear cart</button>`)}
+function showFavs(){view='favs';
+  if(!favs.length){openModal('Saved Articles','<p>Tap the heart on any article to save it here.</p>');return}
+  openModal('Saved Articles',favs.map(id=>{const a=A.find(x=>x.id==id);return `<div class="flex items-center justify-between gap-3 py-3 border-b border-surface-border"><button data-act="open" data-id="${id}" class="text-left font-semibold text-price-primary hover:text-primary">${a.title}</button><button data-act="fav" data-id="${id}" aria-label="Remove" class="text-danger"><span class="ms fill">favorite</span></button></div>`}).join(''))}
+function showShop(){openModal('Shop Phones',P.map(p=>`<div class="flex items-center justify-between gap-3 py-3 border-b border-surface-border"><div><p class="font-semibold text-price-primary">${p.n}</p><p class="text-xs">${p.s} • ${kes(p.p)}</p></div><button data-act="add" data-id="${p.id}" data-shop="1" class="px-3 py-1.5 rounded-lg bg-primary-container text-white text-xs font-bold">Add to bag</button></div>`).join('')+`<a href="/shop" class="block mt-4 text-center text-primary font-bold underline">Browse all phones</a>`)}
+function showBrands(){openModal('Official Brands','<p class="mb-3">Tap a brand to find related articles.</p><div class="flex flex-wrap gap-2">'+BRANDS.map(b=>`<button data-act="brand" data-k="${b}" class="px-4 py-2 rounded-lg border border-surface-border font-semibold hover:border-primary hover:text-primary">${b}</button>`).join('')+'</div>')}
+function showTrack(){openModal('Track Your Order',`<p class="mb-3">Enter your order number or the phone number used to order.</p><input id="ordNo" class="w-full rounded-lg border-surface-border text-sm" placeholder="e.g. DS-10234 or 07XX XXX XXX"/><button data-act="trackGo" class="mt-3 w-full bg-primary-container text-white font-bold py-2.5 rounded-lg">Track on WhatsApp</button>`)}
+function showAcct(){openModal('Your Account',`<p class="mb-3">Sign in to follow orders and keep saved articles.</p><input id="accName" class="w-full rounded-lg border-surface-border text-sm mb-2" placeholder="Your name" value="${store.get('ds_name','')}"/><input id="accEmail" type="email" class="w-full rounded-lg border-surface-border text-sm" placeholder="Email" value="${store.get('ds_email','')}"/><button data-act="accSave" class="mt-3 w-full bg-primary-container text-white font-bold py-2.5 rounded-lg">Save details</button>`)}
+function nav(k){
+  if(k==='home'){closeModal();window.scrollTo({top:0,behavior:'smooth'})}
+  else if(k==='blog'){closeModal();$('#articles').scrollIntoView({behavior:'smooth'})}
+  else if(k==='shop')showShop();
+  else if(k==='brands')showBrands();
+  else if(k==='wish')showFavs();
+  else if(k==='acct')showAcct();
+  else if(k==='track')showTrack();
+  
+  else if(k==='menu')openModal('Menu','<div class="flex flex-col">'+NAV.map(n=>`<a href="${n[1]}" class="py-3 border-b border-surface-border font-semibold text-price-primary">${n[0]}</a>`).join('')+`<a href="tel:+254790835039" class="py-3 border-b border-surface-border font-semibold text-price-primary">Hotline: 0790 835 039</a><a target="_blank" rel="noopener" href="${wa('Hello Daisolve, I would like to place an order')}" class="py-3 font-semibold text-mpesa-green">WhatsApp Orders</a></div>`);
+}
+function setQ(v){q=v;$('#q').value=v;render()}
+function toggleFav(id){favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];save();render()}
+
+/* Events */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const act=b.dataset.act,id=b.dataset.id,k=b.dataset.k;
+  if(act==='open')showArticle(id);
+  else if(act==='nav')nav(k);
+  else if(act==='info')openModal(...INFO[k]);
+  else if(act==='cat'){cat=k;render()}
+  else if(act==='tag'){closeModal();setQ(TAGQ[k]||k);$('#articles').scrollIntoView({behavior:'smooth'})}
+  else if(act==='brand'){closeModal();setQ(k);cat='all';render();$('#articles').scrollIntoView({behavior:'smooth'})}
+  else if(act==='fav'){toggleFav(id);if(view==='favs')showFavs();else toast(favs.includes(id)?'Saved to your list':'Removed from saved')}
+  else if(act==='add'){cart[id]=Math.min(10,(cart[id]||0)+1);save();if(view==='cart')showCart();else toast('Added to cart')}
+  else if(act==='dec'){cart[id]=Math.max(0,(cart[id]||0)-1);if(!cart[id])delete cart[id];save();showCart()}
+  else if(act==='del'){delete cart[id];save();showCart()}
+  else if(act==='clear'){cart={};save();showCart()}
+  else if(act==='trackGo'){const v=$('#ordNo').value.trim();if(!v){toast('Enter an order number first');return}window.open(wa('Hello Daisolve, please update me on order: '+v),'_blank')}
+  else if(act==='accSave'){const n=$('#accName').value.trim(),m=$('#accEmail').value.trim();if(!n||!/^\S+@\S+\.\S+$/.test(m)){toast('Enter your name and a valid email');return}store.set('ds_name',n);store.set('ds_email',m);closeModal();toast('Welcome, '+n+'!')}
+});
+$('#btnMenu').onclick=()=>nav('menu');
+$('#btnCart').onclick=showCart;
+$('#btnSaved').onclick=showFavs;
+$('#btnFavs').onclick=()=>{location.href='/wishlist'};
+$('#btnSearch').onclick=()=>{window.scrollTo({top:0,behavior:'smooth'});$('#q').focus()};
+$('#mClose').onclick=closeModal;$('#backdrop').onclick=closeModal;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+$('#q').addEventListener('input',e=>{q=e.target.value.trim();render()});
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter')$('#articles').scrollIntoView({behavior:'smooth'})});
+$('#qClear').onclick=()=>setQ('');
+$('#reset').onclick=()=>{cat='all';setQ('')};
+$('#news').addEventListener('submit',e=>{e.preventDefault();const v=$('#newsEmail').value.trim(),m=$('#newsMsg');
+  if(!/^\S+@\S+\.\S+$/.test(v)){m.textContent='Please enter a valid email address.';m.className='text-xs text-red-300 mt-3';return}
+  store.set('ds_news',v);m.textContent='Asante sana! You have subscribed to Daisolve Tech Alerts.';m.className='text-xs text-mpesa-green font-bold mt-3';$('#newsEmail').value=''});
+
+const G='from-price-primary via-primary to-primary-container';
+const E=daiArticles.esc;
+function featHTML(a){return `<div class="relative w-full aspect-[16/9] md:aspect-[21/9] bg-gradient-to-br ${G} flex items-center justify-center overflow-hidden">${a.img?`<img src="${a.img}" alt="" class="absolute inset-0 w-full h-full object-cover"/>`:'<span class="ms fill text-white/25 !text-[120px]">smartphone</span>'}<div class="absolute top-3 left-3 flex flex-wrap gap-2">${a.tag?`<span class="bg-tertiary-container text-white text-[11px] px-2.5 py-1 rounded-md uppercase font-bold tracking-wider">${a.tag}</span>`:''}</div></div><div class="p-5 md:p-6 flex flex-col flex-grow"><div class="flex items-center gap-3 text-xs text-secondary mb-2"><span>${daiArticles.date(a.created)}</span>${a.read?`<span>•</span><span>${a.read} read</span>`:''}</div><h2 class="text-[22px] md:text-3xl font-bold text-price-primary tracking-tight mb-3">${a.title}</h2><p class="text-sm text-on-surface-variant leading-relaxed mb-4">${a.ex}</p><div class="mt-auto pt-3 border-t border-surface-border flex items-center justify-between gap-2"><span class="text-[11px] text-mpesa-green font-bold">${a.foot}</span><button data-act="open" data-id="${a.id}" class="inline-flex items-center gap-1.5 text-[13px] font-bold text-primary hover:text-primary-container">Read Full Guide <span class="ms !text-base">arrow_forward</span></button></div></div>`}
+function showDetail(a){
+  document.title=a.title+' | Daisolve';{let cl=document.querySelector('link[rel="canonical"]');if(!cl){cl=document.createElement('link');cl.rel='canonical';document.head.appendChild(cl)}cl.href='https://www.daisolvetechnologies.co.ke/blog/'+encodeURIComponent(a.id)}
+  [...$('#top').children].forEach(c=>c.id==='detail'?0:c.classList.add('hidden'));
+  const d=$('#detail');d.classList.remove('hidden');
+  d.innerHTML=`<a href="/blog" class="inline-flex items-center gap-1 text-[13px] font-bold text-primary mb-4"><span class="ms !text-base">arrow_back</span> All articles</a><article class="max-w-3xl mx-auto"><p class="text-xs text-secondary mb-2">${(CATS.find(c=>c[0]===a.cat)||['','Article'])[1]}${a.read?' • '+a.read+' read':''} • ${daiArticles.date(a.created)}${a.author?' • By '+a.author:''}</p><h1 class="text-[28px] md:text-4xl font-extrabold text-price-primary tracking-tight mb-4">${a.title}</h1>${a.img?`<img src="${a.img}" alt="" class="w-full rounded-xl mb-6 object-cover max-h-[420px]"/>`:''}<p class="text-base text-on-surface-variant mb-4">${a.ex}</p><div class="text-[15px] text-on-surface-variant leading-relaxed">${daiArticles.render(a.rawBody)}</div><div class="mt-8 flex flex-wrap gap-3"><a href="/shop" class="px-5 py-3 rounded-lg bg-primary-container text-white font-bold text-[13px]">Shop phones</a><a target="_blank" rel="noopener" href="${wa('Hello Daisolve, I read your article: '+a.rawTitle)}" class="px-5 py-3 rounded-lg border border-mpesa-green text-mpesa-green font-bold text-[13px]">Ask on WhatsApp</a></div></article>`;
+  window.scrollTo(0,0);
+}
+$('#radar').innerHTML=$('#radar').innerHTML||'<li class="text-xs text-secondary">No phones listed yet.</li>';
+daiArticles.load(rows=>{
+  A=rows.map(a=>Object.assign({},a,{rawBody:a.body,rawTitle:a.title,title:E(a.title),ex:E(a.ex),tag:E(a.tag),foot:E(a.foot),read:E(a.read),img:E(a.img),grad:G,icon:'article',bodyArr:a.body.split(/\n\s*\n/)}));
+  const bm=location.pathname.match(/^\/blog\/([^\/]+)/);const id=bm?decodeURIComponent(bm[1]):new URLSearchParams(location.search).get('id');
+  if(id){const a=A.find(x=>x.id===id);if(a){showDetail(a);badges();return}}
+  const f=A.find(a=>a.feat);
+  if(f){$('#featArt').innerHTML=featHTML(f)}else{$('#featArt').classList.add('hidden');$('#featSide').classList.replace('lg:col-span-4','lg:col-span-12')}
+  const fin=A.find(a=>a.cat==='deals'&&a!==f);if(fin){$('#finBtn').dataset.id=fin.id;$('#finBtn').classList.remove('hidden')}
+  render();badges();
+});
+badges();
+})();
+</script>
+</body></html>

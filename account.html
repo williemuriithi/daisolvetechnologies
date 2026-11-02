@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account | Daisolve Technologies</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Font Family -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#003fa5",
+            "on-primary-fixed": "#001849",
+            "tertiary-container": "#af6000",
+            "on-secondary-fixed-variant": "#374765",
+            "inverse-surface": "#213145",
+            "primary-fixed-dim": "#b3c5ff",
+            "on-secondary": "#ffffff",
+            "primary-container": "#1769ff",
+            "surface-container-high": "#dce9ff",
+            "outline-variant": "#c2c6d8",
+            "error": "#ba1a1a",
+            "price-strikethrough": "#94A3B8",
+            "surface-variant": "#d3e4fe",
+            "on-primary-container": "#fefbff",
+            "price-primary": "#10213D",
+            "on-primary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "tertiary": "#8b4b00",
+            "surface-border": "#E2E8F0",
+            "on-secondary-fixed": "#091b37",
+            "on-error-container": "#93000a",
+            "on-secondary-container": "#505f7f",
+            "secondary-fixed": "#d7e2ff",
+            "on-surface": "#0b1c30",
+            "inverse-on-surface": "#eaf1ff",
+            "background": "#f8f9ff",
+            "surface-container-low": "#eff4ff",
+            "surface-tint": "#0054d7",
+            "surface": "#f8f9ff",
+            "on-tertiary-container": "#fffbff",
+            "surface-bright": "#f8f9ff",
+            "inverse-primary": "#b3c5ff",
+            "primary": "#0052d1",
+            "surface-canvas": "#FFFFFF",
+            "secondary-container": "#cadaff",
+            "tertiary-fixed": "#ffdcc2",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed": "#2e1500",
+            "outline": "#737687",
+            "mpesa-green": "#43B02A",
+            "secondary": "#4f5e7e",
+            "on-background": "#0b1c30",
+            "primary-fixed": "#dbe1ff",
+            "on-tertiary-fixed-variant": "#6d3a00",
+            "danger": "#EF4444",
+            "surface-container-highest": "#d3e4fe",
+            "tertiary-fixed-dim": "#ffb77a",
+            "success": "#10B981",
+            "surface-container": "#e5eeff",
+            "surface-subtle": "#F2F7FF",
+            "on-error": "#ffffff",
+            "secondary-fixed-dim": "#b7c7eb",
+            "on-surface-variant": "#424655",
+            "error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin": "1rem",
+            "gutter": "1rem",
+            "space-xl": "2.5rem",
+            "space-lg": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "2rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "headline-lg-mobile": ["Inter"],
+            "headline-sm": ["Inter"],
+            "price-display": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-xl": ["Inter"],
+            "headline-xl-mobile": ["Inter"],
+            "price-display-mobile": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-sm": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg-mobile": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "price-display": ["22px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "headline-xl-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "price-display-mobile": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    html { scroll-behavior: smooth; }
+    [id] { scroll-margin-top: 84px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .animate-ping, .animate-spin { animation: none; } }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #1769ff; outline-offset: 2px; }
+  </style>
+<link rel="canonical" href="https://www.daisolvetechnologies.co.ke/account"/>
+</head>
+<body data-page="account" class="bg-background text-on-surface antialiased pb-24 md:pb-12 min-h-screen flex flex-col">
+<!-- 1. Top Announcement Bar -->
+<aside class="bg-price-primary text-surface-canvas py-2 px-margin md:px-margin-desktop text-body-sm font-body-sm z-50">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+<div class="flex items-center gap-2 text-center sm:text-left">
+<span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-mpesa-green animate-ping"></span>
+<span class="text-surface-subtle font-medium">Your Next Phone Is Just a Click Away | Same-Day Nairobi Delivery &amp; Countrywide Shipping</span>
+</div>
+<div class="flex items-center gap-4 text-xs font-semibold">
+<a class="flex items-center gap-1.5 text-mpesa-green hover:underline" href="https://wa.me/254790835039" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>WhatsApp Quick Order</span>
+</a>
+<span class="text-outline hidden sm:inline">|</span>
+<div class="hidden sm:flex items-center gap-1 text-surface-subtle">
+<span class="material-symbols-outlined text-[16px]">pin_drop</span>
+<span>Jamia Shopping Mall, Nairobi CBD</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- 2. Main Header (TopAppBar JSON Implementation) -->
+<header class="bg-surface-canvas sticky top-0 z-40 shadow-sm border-b border-surface-border">
+<div class="w-full max-w-7xl mx-auto flex items-center justify-between px-margin md:px-margin-desktop h-16 gap-3">
+<!-- Brand & Mobile Menu Trigger -->
+<div class="flex items-center gap-3">
+<button aria-label="Open Navigation Drawer" class="md:hidden text-primary p-1.5 rounded-lg hover:bg-surface-subtle active:scale-95 transition-transform" id="mobileMenuBtn">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+<a href="/home" class="flex items-center gap-2" aria-label="Daisolve Technologies home"><img src="/logo.png" alt="Daisolve Technologies" width="140" height="108" class="h-11 md:h-12 w-auto block"/></a>
+</div>
+<!-- Comprehensive Search Bar -->
+<div class="flex-1 max-w-xl mx-2 hidden sm:block">
+<div class="relative flex items-center">
+<input class="w-full h-10 pl-10 pr-24 bg-surface-subtle border border-surface-border rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="searchInput" placeholder="Search phones, brands and accessories..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 text-secondary text-xl pointer-events-none">search</span>
+<button class="absolute right-1 top-1 bottom-1 px-3 bg-primary-container text-white rounded-md text-label-md font-label-md hover:bg-primary active:scale-95 transition-all flex items-center gap-1">
+<span>Search</span>
+</button>
+</div>
+</div>
+<!-- Header Action Icons -->
+<div class="flex items-center gap-1 sm:gap-2">
+<!-- Mobile Search Trigger -->
+<button aria-label="Toggle Search" class="sm:hidden p-2 text-secondary hover:text-primary rounded-full hover:bg-surface-subtle active:scale-95" id="mobileSearchToggle">
+<span class="material-symbols-outlined text-2xl">search</span>
+</button>
+<!-- Wishlist -->
+<a aria-label="Wishlist" class="relative p-2 text-secondary hover:text-primary rounded-full hover:bg-surface-subtle active:scale-95 transition-all" href="#wishlist">
+<span class="material-symbols-outlined text-2xl">favorite</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-tertiary-container text-white text-[10px] font-bold rounded-full flex items-center justify-center" id="wishlistCountBadge">0</span>
+</a>
+<!-- Cart -->
+<a aria-label="Shopping Cart" class="relative p-2 text-secondary hover:text-primary rounded-full hover:bg-surface-subtle active:scale-95 transition-all" href="#cart">
+<span class="material-symbols-outlined text-2xl">shopping_bag</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center" id="cartCountBadge">0</span>
+</a>
+<!-- User Account (Desktop) -->
+<a class="hidden md:flex items-center gap-2 pl-2 text-secondary hover:text-primary rounded-lg py-1.5 px-2 hover:bg-surface-subtle transition-all" href="#account">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+<span class="text-label-md font-label-md">Account</span>
+</a>
+</div>
+</div>
+<!-- Mobile Expandable Search Bar -->
+<div class="hidden px-4 pb-3 sm:hidden border-t border-surface-border pt-2 bg-surface-canvas" id="mobileSearchRow">
+<div class="relative flex items-center">
+<input class="w-full h-10 pl-10 pr-20 bg-surface-subtle border border-surface-border rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary-container" placeholder="Search Samsung, iPhone, Redmi..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 text-secondary text-xl">search</span>
+<button class="absolute right-1 top-1 bottom-1 px-3 bg-primary-container text-white rounded-md text-label-sm font-label-sm">
+          Find
+        </button>
+</div>
+</div>
+</header>
+<!-- 3. Navigation Ribbon / Quick Tabs -->
+<nav class="bg-surface-canvas border-b border-surface-border hidden md:block">
+<div class="max-w-7xl mx-auto px-margin-desktop flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+<a class="px-4 py-2 text-label-md font-label-md text-primary font-bold border-b-2 border-primary transition-colors flex items-center gap-1.5 whitespace-nowrap" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+<span>Home</span>
+</a>
+<a class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="#catalogue">Shop All Phones</a>
+<a class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="#brands">Brands</a>
+<a class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap" href="#deals">
+<span>Deals</span>
+<span class="px-1.5 py-0.5 rounded-full bg-tertiary-fixed text-tertiary font-bold text-[10px]">HOT</span>
+</a>
+<a class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="#blog">Blog</a>
+<a class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="#about">About Us</a>
+<a class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="#contact">Contact</a>
+<div class="ml-auto flex items-center gap-3 text-label-md font-label-md text-secondary">
+<span class="flex items-center gap-1 text-mpesa-green font-semibold">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+          M-PESA Pochi · Bank · Card · PayPal
+        </span>
+</div>
+</div>
+</nav>
+<!-- Side Navigation Drawer for Mobile (Semantic Shell Anchor) -->
+<div class="fixed inset-0 bg-price-primary/60 backdrop-blur-sm z-50 hidden transition-opacity" id="drawerOverlay"></div>
+<aside class="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-surface-canvas z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col" id="navDrawer">
+<div class="p-4 border-b border-surface-border flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary-container text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">smartphone</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-price-primary">Daisolve Technologies</span>
+</div>
+<button aria-label="Close Navigation Drawer" class="p-2 text-secondary hover:text-price-primary" id="closeDrawerBtn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="h-full flex flex-col p-4 space-y-2 overflow-y-auto">
+<a class="flex items-center gap-3 bg-surface-container-low text-primary font-bold rounded-lg px-4 py-3" href="#catalogue">
+<span class="material-symbols-outlined">smartphone</span>
+<span class="text-label-md font-label-md">All Smartphones</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface rounded-lg px-4 py-3 hover:bg-surface-subtle transition-colors" href="#brands">
+<span class="material-symbols-outlined">verified</span>
+<span class="text-label-md font-label-md">Official Brand Stores</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface rounded-lg px-4 py-3 hover:bg-surface-subtle transition-colors" href="#deals">
+<span class="material-symbols-outlined">local_offer</span>
+<span class="text-label-md font-label-md">Deals &amp; Trade-In</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface rounded-lg px-4 py-3 hover:bg-surface-subtle transition-colors" href="#tracking">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-label-md font-label-md">Order Tracking</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface rounded-lg px-4 py-3 hover:bg-surface-subtle transition-colors" href="#support">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="text-label-md font-label-md">Customer Support</span>
+</a>
+<div class="mt-auto pt-6 border-t border-surface-border flex flex-col gap-3">
+<div class="bg-surface-subtle p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-mpesa-green text-3xl">payments</span>
+<div>
+<div class="text-xs font-bold text-price-primary">Pay Your Way</div>
+<div class="text-[11px] text-secondary">Pochi, bank, card or PayPal</div>
+</div>
+</div>
+<a class="flex items-center justify-center gap-2 w-full py-2.5 bg-price-primary text-white rounded-lg text-label-md font-label-md" href="tel:+254790835039">
+<span class="material-symbols-outlined text-lg">call</span>
+<span>Call / WhatsApp: 0790 835039</span>
+</a>
+</div>
+</div>
+</aside>
+<section class="bg-gradient-to-b from-surface-subtle to-surface border-b border-surface-border">
+<div class="max-w-7xl mx-auto px-margin md:px-margin-desktop py-6 md:py-8">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-price-primary">Your Account</h1>
+<p class="text-body-sm md:text-body-md text-secondary mt-1">Sign in to see your orders and check out faster.</p>
+</div></section>
+<section class="py-8 bg-background min-h-[50vh]"><div class="max-w-7xl mx-auto px-margin md:px-margin-desktop"><div class="max-w-lg mx-auto bg-surface-canvas border border-surface-border rounded-2xl shadow-sm" id="accountPage"></div></div></section>
+<div aria-hidden="true" class="hidden">
+<!-- 6. All Phones Catalogue Section (Core Feature) -->
+<section class="py-8 md:py-14 bg-background" id="catalogue">
+<div class="max-w-7xl mx-auto px-margin md:px-margin-desktop">
+<!-- Catalogue Header & Controls -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+<div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-primary font-bold">Verified Inventory</span>
+</div>
+<h2 class="text-headline-md md:text-headline-lg font-headline-md md:font-headline-lg text-price-primary">Explore Our Phones</h2>
+<p class="text-body-sm md:text-body-md font-body-sm md:font-body-md text-secondary">Showing verified available models in Kenya with distributor warranties</p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Sort Dropdown -->
+<div class="relative">
+<select class="bg-surface-canvas border border-surface-border rounded-lg px-3 py-2 pr-8 text-label-md font-label-md text-price-primary focus:outline-none focus:border-primary-container cursor-pointer shadow-sm" id="sortSelect">
+<option value="newest">Newest Arrivals</option>
+<option value="low-high">Price: Low to High</option>
+<option value="high-low">Price: High to Low</option>
+<option value="popular">Popular in Kenya</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-2.5 text-secondary pointer-events-none text-base">expand_more</span>
+</div>
+<a class="hidden sm:inline-flex items-center gap-1 text-label-md font-label-md text-primary font-bold hover:underline" href="#catalogue">
+<span>View All 142 Phones</span>
+<span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Filter Tabs -->
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-6">
+<button class="filter-tab px-4 py-2 rounded-lg text-label-md font-label-md font-semibold bg-primary-container text-white shadow-sm transition-all whitespace-nowrap" data-category="all">
+          All Phones (142)
+        </button>
+<button class="filter-tab px-4 py-2 rounded-lg text-label-md font-label-md font-semibold bg-surface-canvas border border-surface-border text-on-surface-variant hover:border-primary transition-all whitespace-nowrap" data-category="flagship">
+          Flagship Phones
+        </button>
+<button class="filter-tab px-4 py-2 rounded-lg text-label-md font-label-md font-semibold bg-surface-canvas border border-surface-border text-on-surface-variant hover:border-primary transition-all whitespace-nowrap" data-category="midrange">
+          Mid-Range Value
+        </button>
+<button class="filter-tab px-4 py-2 rounded-lg text-label-md font-label-md font-semibold bg-tertiary-fixed text-tertiary hover:bg-tertiary-fixed-dim transition-all whitespace-nowrap" data-category="under20k">
+          Budget Under KSh 20K
+        </button>
+<button class="filter-tab px-4 py-2 rounded-lg text-label-md font-label-md font-semibold bg-surface-canvas border border-surface-border text-on-surface-variant hover:border-primary transition-all whitespace-nowrap" data-category="5g">
+          5G Ready
+        </button>
+</div>
+<!-- Product Cards Grid: Mobile 2-column, Tablet 3-4, Desktop 4 -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6" id="productGrid">
+<!-- Product 1: Samsung Galaxy S24 Ultra -->
+
+<!-- Product 2: Apple iPhone 15 Pro Max -->
+
+<!-- Product 3: Tecno Camon 30 Pro 5G -->
+
+<!-- Product 4: Infinix Note 40 Pro -->
+
+<!-- Product 5: Xiaomi Redmi Note 13 Pro+ -->
+
+<!-- Product 6: Oppo Reno 12 5G -->
+
+<!-- Product 7: Vivo V30 5G -->
+
+<!-- Product 8: Nokia G42 5G -->
+
+</div>
+<!-- Incremental Catalogue Loader -->
+<div class="mt-10 max-w-md mx-auto flex flex-col items-center text-center">
+<div class="text-body-sm font-body-sm text-secondary mb-2 flex items-center gap-1">
+<span>Showing</span>
+<span class="font-bold text-price-primary">8</span>
+<span>of</span>
+<span class="font-bold text-price-primary">142</span>
+<span>Verified Phones</span>
+</div>
+<!-- Progress bar -->
+<div class="w-full bg-surface-border rounded-full h-2 mb-4 overflow-hidden">
+<div class="bg-primary-container h-2 rounded-full w-[8%] transition-all duration-300"></div>
+</div>
+<button class="h-11 px-6 bg-surface-canvas border border-surface-border text-price-primary hover:border-primary-container rounded-lg font-label-md text-label-md font-bold shadow-sm hover:shadow flex items-center gap-2 active:scale-95 transition-all" id="loadMoreBtn">
+<span class="material-symbols-outlined text-lg">sync</span>
+<span>Load More Phones</span>
+</button>
+</div>
+</div>
+</section>
+
+</div>
+<!-- 12. Comprehensive Footer (Footer JSON Implementation) -->
+<footer class="bg-price-primary text-outline-variant pt-12 pb-10 border-t border-secondary">
+<div class="max-w-7xl mx-auto px-margin md:px-margin-desktop">
+<!-- Footer Columns -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-10 border-b border-secondary/40">
+<!-- Col 1: Brand & Contact -->
+<div class="lg:col-span-2 space-y-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">smartphone</span>
+</div>
+<span class="text-headline-md font-headline-md font-bold text-surface-canvas tracking-tight">Daisolve Technologies</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline-variant max-w-sm">
+            Kenya's trusted premier smartphone store. Genuine products, authorized regional warranties, and fastest doorstep dispatch in Nairobi &amp; countrywide.
+          </p>
+<div class="space-y-2 text-body-sm font-body-sm pt-2">
+<div class="flex items-center gap-2 text-surface-subtle">
+<span class="material-symbols-outlined text-primary-fixed-dim text-lg">location_on</span>
+<span>Jamia Shopping Mall, Nairobi CBD, Kenya</span>
+</div>
+<div class="flex items-center gap-2 text-surface-subtle">
+<span class="material-symbols-outlined text-primary-fixed-dim text-lg">call</span>
+<span>Call / WhatsApp: +254 790 835039</span>
+</div>
+<div class="flex items-center gap-2 text-surface-subtle">
+<span class="material-symbols-outlined text-primary-fixed-dim text-lg">mail</span>
+<span>sales@daisolvetechnologies.co.ke</span>
+</div>
+</div>
+</div>
+<!-- Col 2: Quick Links from JSON -->
+<div>
+<h4 class="text-label-md font-label-md text-surface-canvas font-bold uppercase tracking-wider mb-4">Customer Services</h4>
+<ul class="space-y-2.5 text-body-sm font-body-sm">
+<li><a class="hover:text-surface-canvas transition-colors" href="#">Warranty Policy</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#">Same-Day Nairobi Delivery</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#">Trade-In Program</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#">Terms of Service</a></li>
+<li><a class="hover:text-surface-canvas transition-colors flex items-center gap-1 text-mpesa-green font-semibold" href="https://wa.me/254790835039" target="_blank" rel="noopener">
+<span class="material-symbols-outlined text-sm">chat</span> WhatsApp Orders
+            </a></li>
+</ul>
+</div>
+<!-- Col 3: Shop by Brand -->
+<div>
+<h4 class="text-label-md font-label-md text-surface-canvas font-bold uppercase tracking-wider mb-4">Official Brands</h4>
+<ul class="space-y-2.5 text-body-sm font-body-sm">
+<li><a class="hover:text-surface-canvas transition-colors" href="#brands">Samsung Kenya</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#brands">Apple iPhones</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#brands">Tecno Mobile</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#brands">Infinix Kenya</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#brands">Xiaomi Redmi</a></li>
+<li><a class="hover:text-surface-canvas transition-colors" href="#brands">Oppo &amp; Vivo</a></li>
+</ul>
+</div>
+<!-- Col 4: Verified Payments & Hours -->
+<div>
+<h4 class="text-label-md font-label-md text-surface-canvas font-bold uppercase tracking-wider mb-4">Payment &amp; Hours</h4>
+<div class="space-y-3 text-body-sm font-body-sm">
+<div class="bg-secondary/20 p-3 rounded-lg border border-secondary/30">
+<span class="text-xs font-bold text-mpesa-green flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                M-PESA Pochi la Biashara
+              </span>
+<p class="text-[11px] text-outline-variant mt-1">Send to +254 790 835039. Bank transfer, Visa/Mastercard &amp; PayPal also accepted.</p>
+</div>
+<div>
+<span class="text-surface-canvas font-semibold block text-xs">Store Opening Hours:</span>
+<p class="text-xs text-outline-variant">Mon – Sat: 8:00 AM – 7:30 PM</p>
+<p class="text-xs text-outline-variant">Sundays: 10:00 AM – 4:00 PM</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Copyright & Bottom Disclaimer (from JSON) -->
+<div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm font-body-sm">
+<p class="text-center sm:text-left text-xs">
+          © 2026 Daisolve Technologies Kenya. Genuine Gadgets. Secure payments.
+        </p>
+<div class="flex items-center gap-4 text-xs">
+<span class="text-primary-fixed-dim">All Trademarks Acknowledged</span>
+<span>•</span>
+<a class="hover:text-surface-canvas" href="#">Privacy Policy</a>
+<span>•</span>
+<a class="hover:text-surface-canvas" href="#">Sitemap</a>
+</div>
+</div>
+</div>
+</footer>
+<nav aria-label="Primary" class="md:hidden fixed bottom-0 w-full z-50 flex items-center justify-around h-[60px] px-2 bg-surface-canvas border-t border-surface-border shadow-[0_-4px_20px_0_rgba(16,33,61,0.08)]">
+<a class="nav-item flex flex-col items-center justify-center transition-transform active:scale-95 text-secondary hover:text-primary" data-tab="home" href="/home">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="text-label-sm font-label-sm">Home</span>
+</a>
+<a class="nav-item flex flex-col items-center justify-center transition-transform active:scale-95 text-secondary hover:text-primary" data-tab="shop" href="/shop">
+<span class="material-symbols-outlined text-2xl">storefront</span>
+<span class="text-label-sm font-label-sm">Shop</span>
+</a>
+<a class="nav-item flex flex-col items-center justify-center transition-transform active:scale-95 text-secondary hover:text-primary" data-tab="brands" href="/brands">
+<span class="material-symbols-outlined text-2xl">devices</span>
+<span class="text-label-sm font-label-sm">Brands</span>
+</a>
+<a class="nav-item relative flex flex-col items-center justify-center transition-transform active:scale-95 text-secondary hover:text-primary" data-tab="wishlist" href="/wishlist">
+<span class="material-symbols-outlined text-2xl">favorite</span><span class="absolute -top-1 right-2 w-3.5 h-3.5 bg-tertiary-container text-white text-[9px] font-bold rounded-full flex items-center justify-center" id="mobileWishlistBadge">0</span>
+<span class="text-label-sm font-label-sm">Wishlist</span>
+</a>
+<a class="nav-item flex flex-col items-center justify-center transition-transform active:scale-95 text-primary font-bold" data-tab="account" href="/account" aria-current="page">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-label-sm font-label-sm">Account</span>
+</a>
+</nav>
+<script src="/catalog.js"></script><script src="/supabase-catalog.js"></script>
+<script src="/site.js"></script>
+</body></html>
