@@ -26,13 +26,33 @@ tailwind.config = { theme: { extend: {
   body{font-family:Inter,system-ui,sans-serif}
   .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
   .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  /* admin sign-in gate: nothing but the login box shows until signed in */
+  body.gated > *:not(#gate):not(#toast){display:none!important}
+  body:not(.gated) #gate{display:none!important}
   .lbl{font-size:11px;font-weight:700;letter-spacing:.04em}
   @media print{body>*:not(#printArea){display:none!important}#printArea{display:block!important}}
   #printArea{display:none}
 </style>
 <meta name="robots" content="noindex,nofollow"/>
 </head>
-<body class="bg-background text-on-surface antialiased pb-24 md:pb-12 min-h-screen">
+<body class="gated bg-background text-on-surface antialiased pb-24 md:pb-12 min-h-screen">
+
+<!-- Admin sign-in gate -->
+<div id="gate" class="min-h-screen flex items-center justify-center px-4 bg-background">
+  <div class="w-full max-w-sm bg-white rounded-2xl border border-surface-border shadow-lg p-6 space-y-5">
+    <div class="flex flex-col items-center gap-2 text-center">
+      <img src="/logo.png" alt="Daisolve Technologies" width="140" height="108" class="h-16 w-auto"/>
+      <h1 class="text-xl font-bold text-price-primary">Admin sign in</h1>
+      <p class="text-xs text-secondary">Authorized staff only. Sign in to open the dashboard.</p>
+    </div>
+    <form id="loginForm" class="space-y-3" onsubmit="return false">
+      <input id="lgEmail" type="email" autocomplete="username" placeholder="Admin email" class="w-full px-3 py-2.5 rounded-lg border border-surface-border text-sm"/>
+      <input id="lgPass" type="password" autocomplete="current-password" placeholder="Password" class="w-full px-3 py-2.5 rounded-lg border border-surface-border text-sm"/>
+      <button id="lgBtn" class="w-full bg-primary text-white px-4 py-2.5 rounded-lg text-sm font-semibold active:scale-95">Sign in</button>
+    </form>
+    <a href="/home" class="block text-center text-xs text-primary hover:underline">Back to shop</a>
+  </div>
+</div>
 
 <!-- Status banner -->
 <div class="bg-price-primary text-white py-1.5 px-4 md:px-8 text-xs">
@@ -198,11 +218,6 @@ tailwind.config = { theme: { extend: {
       <p class="text-xs text-secondary">Add or delete products in the live database. Sign in with your admin account.</p></div>
       <div id="authBar" class="text-xs text-secondary"></div>
     </div>
-    <form id="loginForm" class="grid grid-cols-1 sm:grid-cols-3 gap-2" onsubmit="return false">
-      <input id="lgEmail" type="email" autocomplete="username" placeholder="Admin email" class="px-3 py-2 rounded-lg border border-surface-border text-sm"/>
-      <input id="lgPass" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 rounded-lg border border-surface-border text-sm"/>
-      <button id="lgBtn" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Sign in</button>
-    </form>
     <div id="prodAdmin" class="hidden space-y-4">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
         <input id="pName" placeholder="Product name *" class="col-span-2 px-3 py-2 rounded-lg border border-surface-border"/>
@@ -612,6 +627,7 @@ async function reloadCatalog() {
 }
 function authUi() {
   const s = sess();
+  document.body.classList.toggle('gated', !s);
   $('#loginForm').classList.toggle('hidden', !!s);
   $('#prodAdmin').classList.toggle('hidden', !s);
   $('#blogAdmin').classList.toggle('hidden', !s);
@@ -779,6 +795,7 @@ document.addEventListener('change', e => {
 });
 
 authUi();
+(async () => { if (!sess()) return; try { const t = await token(); if (!t) return; const r = await fetch(SB.url + '/auth/v1/user', {headers:{apikey:SB.key, Authorization:'Bearer ' + t}}); if (!r.ok) { setSess(null); authUi(); } } catch (e) {} })();
 
 /* mobile drawer */
 const navOpen = on => { $('#navDrawer').classList.toggle('-translate-x-full', !on); $('#navOvl').classList.toggle('hidden', !on); };
