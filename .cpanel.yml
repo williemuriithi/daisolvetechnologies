@@ -4,5 +4,6 @@ deployment:
     - /bin/cp -f .htaccess /home/daisolve/public_html/
     - /bin/cp -f *.html /home/daisolve/public_html/
     - /bin/cp -f *.js /home/daisolve/public_html/
-    - /bin/cp -f logo.png /home/daisolve/public_html/
+    - /bin/cp -f *.png *.jpg *.ico /home/daisolve/public_html/
+    - /bin/cp -f robots.txt sitemap.php /home/daisolve/public_html/
     - /bin/rm -f /home/daisolve/public_html/serve.js

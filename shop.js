@@ -72,7 +72,7 @@ function card(p) {
 <div>
 <div class="relative w-full aspect-square bg-surface-subtle rounded-lg overflow-hidden flex items-center justify-center p-2 mb-2 cursor-pointer" data-qv="${p.id}">
 ${left}${right}
-<img alt="${esc(p.name)}" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-200" src="${imgOf(p)}"/>
+<img alt="${esc(p.name)}" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-200" loading="lazy" decoding="async" src="${imgOf(p)}"/>
 <button aria-label="${w ? 'Remove from wishlist' : 'Add to wishlist'}" class="absolute bottom-1.5 right-1.5 w-7 h-7 bg-white/80 rounded-full flex items-center justify-center ${w ? 'text-danger' : 'text-secondary'} hover:text-danger shadow-sm active:scale-90 transition-all" data-wish="${p.id}" type="button"><span class="material-symbols-outlined text-[16px]"${w ? ` style="font-variation-settings: 'FILL' 1;"` : ''}>favorite</span></button>
 </div>
 <div class="flex items-center gap-1.5 mb-1"><span class="text-[10px] font-bold text-primary uppercase tracking-wider">${esc(p.brand)}</span><span class="text-secondary text-[10px]">•</span><span class="text-[10px] text-mpesa-green font-semibold flex items-center gap-0.5">${p.dot ? '<span class="w-1.5 h-1.5 rounded-full bg-mpesa-green"></span> ' : ''}${esc(p.sub)}</span></div>

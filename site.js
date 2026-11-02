@@ -34,7 +34,7 @@ function cardHTML(p) {
 <span class="px-2 py-0.5 rounded ${d ? 'bg-tertiary-container' : 'bg-mpesa-green'} text-white font-bold text-[10px] tracking-wide">${d ? d + '% OFF' : 'NEW'}</span>
 <button aria-label="Add to Wishlist" class="wishlist-btn p-1.5 rounded-full bg-surface-canvas/90 text-secondary hover:text-danger active:scale-90 transition-transform shadow-sm" type="button"><span class="material-symbols-outlined text-lg">favorite</span></button>
 </div>
-<div class="aspect-square w-full flex items-center justify-center p-3 mt-3 bg-surface-subtle rounded-lg overflow-hidden cursor-pointer"><img alt="${esc(p.name)}" class="object-contain h-full w-full" src="${p.img}"/></div>
+<div class="aspect-square w-full flex items-center justify-center p-3 mt-3 bg-surface-subtle rounded-lg overflow-hidden cursor-pointer"><img alt="${esc(p.name)}" class="object-contain h-full w-full" loading="lazy" decoding="async" src="${p.img}"/></div>
 </div>
 <div class="mt-3 flex flex-col flex-1 justify-between">
 <div>
@@ -332,7 +332,7 @@ function renderWishPage(items) {
     return;
   }
   wp.innerHTML = `<p class="text-body-sm text-secondary mb-4">${items.length} saved ${items.length === 1 ? 'phone' : 'phones'}</p><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">${items.map(p => `<article class="bg-surface-canvas border border-surface-border rounded-xl p-3 sm:p-4 flex flex-col justify-between hover:shadow-md transition-all">
-<div class="aspect-square w-full flex items-center justify-center p-3 bg-surface-subtle rounded-lg cursor-pointer" data-qv="${p.id}"><img alt="${esc(p.name)}" class="object-contain h-full w-full" src="${p.img}"/></div>
+<div class="aspect-square w-full flex items-center justify-center p-3 bg-surface-subtle rounded-lg cursor-pointer" data-qv="${p.id}"><img alt="${esc(p.name)}" class="object-contain h-full w-full" loading="lazy" decoding="async" src="${p.img}"/></div>
 <div class="mt-3"><span class="text-[10px] uppercase font-bold text-primary tracking-wider">${esc(p.brand)}</span>
 <h3 class="text-label-md sm:text-headline-sm font-headline-sm text-price-primary leading-tight cursor-pointer" data-qv="${p.id}">${esc(p.name)}</h3>
 <p class="text-xs text-secondary mt-0.5">${esc(p.spec)}</p>
@@ -390,7 +390,7 @@ function loadGuides() {
   if (!window.daiArticles) return;
   daiArticles.load(list => {
     const box = document.getElementById('pdGuides'), sec = document.getElementById('pdGuidesSec'); if (!box || !list.length) return;
-    box.innerHTML = list.slice(0, 2).map(a => `<a href="/blog/${encodeURIComponent(a.id)}" class="bg-surface-canvas p-4 rounded-xl border border-surface-border flex gap-4 items-center hover:border-primary/50 transition-colors"><div class="w-24 h-24 rounded-lg bg-surface-subtle flex-shrink-0 overflow-hidden flex items-center justify-center border border-surface-border/60">${a.img ? `<img src="${esc(a.img)}" alt="" class="w-full h-full object-cover"/>` : icon('menu_book', 'text-3xl text-outline-variant')}</div><div class="min-w-0"><p class="text-xs text-secondary">${esc(a.tag || '')}</p><h3 class="text-body-md font-bold text-price-primary leading-snug">${esc(a.title)}</h3><p class="text-body-sm text-secondary mt-1 line-clamp-2">${esc(a.ex)}</p></div></a>`).join('');
+    box.innerHTML = list.slice(0, 2).map(a => `<a href="/blog/${encodeURIComponent(a.id)}" class="bg-surface-canvas p-4 rounded-xl border border-surface-border flex gap-4 items-center hover:border-primary/50 transition-colors"><div class="w-24 h-24 rounded-lg bg-surface-subtle flex-shrink-0 overflow-hidden flex items-center justify-center border border-surface-border/60">${a.img ? `<img src="${esc(a.img)}" alt="${esc(a.title)}" loading="lazy" decoding="async" class="w-full h-full object-cover"/>` : icon('menu_book', 'text-3xl text-outline-variant')}</div><div class="min-w-0"><p class="text-xs text-secondary">${esc(a.tag || '')}</p><h3 class="text-body-md font-bold text-price-primary leading-snug">${esc(a.title)}</h3><p class="text-body-sm text-secondary mt-1 line-clamp-2">${esc(a.ex)}</p></div></a>`).join('');
     sec.classList.remove('hidden');
   });
 }
@@ -400,7 +400,7 @@ function renderProductPage() {
   const id = pm ? decodeURIComponent(pm[1]) : new URLSearchParams(location.search).get('id');
   const p = byId(id);
   if (!p) {
-    document.title = 'Product not found | Daisolve Technologies';
+    document.title = 'Product not found | Daisolve Technologies'; if (window.daiSEO) daiSEO.noindex();
     root.innerHTML = `<div class="max-w-7xl mx-auto px-margin md:px-margin-desktop py-16 text-center">${icon('search_off', 'text-6xl text-outline-variant')}<h1 class="mt-3 text-headline-md font-headline-md text-price-primary">We could not find that phone</h1><p class="text-body-md text-secondary mt-1">The link may be old, or the phone is no longer listed.</p><div class="mt-5 flex justify-center gap-2"><a class="h-11 px-6 bg-primary-container text-white rounded-lg text-label-md font-bold inline-flex items-center hover:bg-primary" href="/shop">Browse all phones</a><a class="h-11 px-6 border border-mpesa-green text-mpesa-green rounded-lg text-label-md font-bold inline-flex items-center gap-2 hover:bg-mpesa-green hover:text-white" href="${waLink('Hello Daisolve, I am looking for a phone I could not find on your website.')}" rel="noopener" target="_blank">Ask on WhatsApp</a></div></div>`;
     return;
   }
@@ -424,6 +424,27 @@ function renderProductPage() {
   /* data with graceful fallbacks (details in catalog.js override these) */
   const gal = (D.gallery && D.gallery.length) ? D.gallery : [{src: p.img, label: 'Front'}];
   const hero = D.hero || gal[0].src;
+  if (window.daiSEO) {
+    const path = '/shop/' + encodeURIComponent(p.id), url = daiSEO.ORIGIN + path;
+    const imgs = gal.map(g => daiSEO.abs(g.src)).filter(Boolean);
+    const specLine = [p.ram ? p.ram + 'GB RAM' : '', stor, net !== 'Network' ? net : ''].filter(Boolean).join(', ');
+    const desc = `Buy the ${p.name} in Kenya for ${kes(p.price)}. ${specLine ? specLine + '. ' : ''}Brand new with warranty, M-PESA payment and same-day Nairobi delivery.`;
+    daiSEO.set({
+      title: `${p.name} Price in Kenya | Daisolve`, desc, path, image: imgs[0], type: 'product',
+      extra: {'product:price:amount': String(p.price), 'product:price:currency': 'KES'},
+      jsonld: [{
+        '@context': 'https://schema.org', '@type': 'Product', name: p.name, sku: String(p.id), category: 'Smartphones',
+        description: daiSEO.clip(desc, 300), image: imgs, brand: {'@type': 'Brand', name: p.brand},
+        offers: {'@type': 'Offer', url, priceCurrency: 'KES', price: String(p.price), availability: 'https://schema.org/InStock',
+                 itemCondition: 'https://schema.org/NewCondition', seller: {'@type': 'Organization', name: 'Daisolve Technologies', url: daiSEO.ORIGIN + '/home'}}
+      }, {
+        '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+          {'@type': 'ListItem', position: 1, name: 'Home', item: daiSEO.ORIGIN + '/home'},
+          {'@type': 'ListItem', position: 2, name: 'Shop', item: daiSEO.ORIGIN + '/shop'},
+          {'@type': 'ListItem', position: 3, name: p.name, item: url}]
+      }]
+    });
+  }
   const highlights = D.highlights || [
     {icon: 'memory', title: 'Memory & Storage', text: `${memShort} for apps, photos and everyday use.`, footer: memShort},
     {icon: 'cell_tower', title: `${net} Connectivity`, text: p.net === '5g' ? 'Ready for 5G where network coverage is available, and fully backward compatible with 4G.' : 'Fast 4G connectivity for streaming, calls and everyday browsing.', footer: (p.chips || [])[1] || (p.chips || [])[0] || net},
@@ -455,10 +476,7 @@ function renderProductPage() {
   const variants = products.filter(x => x.id === p.id || baseName(x) === baseName(p)).sort((a, b) => (a.storage || 0) - (b.storage || 0) || (a.ram || 0) - (b.ram || 0));
 
   /* SEO: Product structured data */
-  let ld = $('#pdLd'); if (!ld) { ld = document.createElement('script'); ld.type = 'application/ld+json'; ld.id = 'pdLd'; document.head.appendChild(ld); }
-  ld.textContent = JSON.stringify({'@context': 'https://schema.org/', '@type': 'Product', name: p.name, image: /^https?:/.test(p.img || '') ? [p.img] : undefined, description: meta.content, brand: {'@type': 'Brand', name: p.brand},
-    offers: {'@type': 'Offer', url: location.href, priceCurrency: 'KES', price: String(p.price), itemCondition: 'https://schema.org/NewCondition', availability: 'https://schema.org/InStock', seller: {'@type': 'Organization', name: 'Daisolve Technologies'}},
-    aggregateRating: {'@type': 'AggregateRating', ratingValue: String(p.rating), reviewCount: String(p.reviews)}});
+  /* Product + Breadcrumb JSON-LD is written by seo.js (daiSEO.set) above. Ratings are left out on purpose: only mark up genuine customer reviews. */
 
   const thumbCls = on => on ? 'aspect-square rounded-lg border-2 border-primary bg-white p-1 flex flex-col items-center justify-center relative overflow-hidden focus:outline-none' : 'aspect-square rounded-lg border border-surface-border hover:border-primary/60 bg-white p-1 flex flex-col items-center justify-center relative overflow-hidden focus:outline-none transition-colors';
   const chev = ic('chevron_right', 'text-xs');

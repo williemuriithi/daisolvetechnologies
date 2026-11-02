@@ -10,6 +10,13 @@ RewriteRule ^ https://www.daisolvetechnologies.co.ke%{REQUEST_URI} [L,R=301]
 # 2) Root goes to /home
 RewriteRule ^$ /home [L,R=301]
 
+# 2b) One address per page: strip trailing slashes (never for real folders)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+# 2c) Live sitemap (reads products and blog posts from Supabase)
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
 # 3) Old .html addresses redirect to the clean ones (only for the original request, avoids loops)
 RewriteCond %{THE_REQUEST} \s/+index\.html[\s?]
 RewriteRule ^ /home [L,R=301]
@@ -31,3 +38,38 @@ RewriteRule ^blog/[^/]+/?$ blog.html [L]
 RewriteRule ^(wishlist|account|checkout|admin)/?$ $1.html [L]
 
 ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------- Speed and security (helps rankings via Core Web Vitals)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/png  "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType image/x-icon "access plus 30 days"
+  ExpiresByType image/vnd.microsoft.icon "access plus 30 days"
+  ExpiresByType text/javascript "access plus 4 hours"
+  ExpiresByType application/javascript "access plus 4 hours"
+  ExpiresByType text/css "access plus 4 hours"
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  <FilesMatch "\.(html|php)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <Files "admin.html">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </Files>
+</IfModule>
+
+# Never expose the dev/test files if they are ever uploaded
+<FilesMatch "^(serve\.js|tool\.py|README\.md|SEO-NOTES\.md|vercel\.json|_redirects)$">
+  Require all denied
+</FilesMatch>

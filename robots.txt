@@ -1,0 +1,9 @@
+# Daisolve Technologies - https://www.daisolvetechnologies.co.ke
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /wishlist
+
+Sitemap: https://www.daisolvetechnologies.co.ke/sitemap.xml
