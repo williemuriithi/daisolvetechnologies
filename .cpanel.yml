@@ -1,6 +1,8 @@
 ---
 deployment:
   tasks:
-    # EDIT: replace CPANELUSER with your cPanel username (shown top-right in cPanel / File Manager path)
-        - export DEPLOYPATH=/home/daisolve/public_html/
-    - /bin/rsync -av --exclude='.git' --exclude='.cpanel.yml' --exclude='.gitignore' --exclude='README.md' --exclude='serve.js' --exclude='_redirects' --exclude='vercel.json' --exclude='tool.py' ./ $DEPLOYPATH
+    - /bin/cp -f .htaccess /home/daisolve/public_html/
+    - /bin/cp -f *.html /home/daisolve/public_html/
+    - /bin/cp -f *.js /home/daisolve/public_html/
+    - /bin/cp -f logo.png /home/daisolve/public_html/
+    - /bin/rm -f /home/daisolve/public_html/serve.js
