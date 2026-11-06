@@ -513,7 +513,7 @@ ${[['verified', 'text-primary', '100% Genuine'], ['electric_bolt', 'text-primary
 <div class="lg:col-span-6 bg-surface-canvas rounded-xl p-5 lg:p-6 border border-surface-border shadow-sm">
 <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-subtle text-primary border border-surface-border mb-2.5">${ic('verified', 'text-sm')}<span class="text-label-sm font-label-sm">Genuine ${esc(p.brand)} · Brand Sealed</span></div>
 <h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-price-primary">${esc(p.name)}</h1>
-<div class="flex items-center gap-2 mt-2 pb-3 border-b border-surface-border"><div class="flex items-center text-tertiary-container">${stars(p.rating, 'text-base fill')}</div><span class="font-bold text-body-md text-price-primary">${p.rating.toFixed(1)}</span><span class="text-outline">·</span><a class="text-primary hover:underline text-body-sm font-body-sm" href="#reviews">(${p.reviews} Customer Reviews)</a></div>
+<div class="flex items-center gap-2 mt-2 pb-3 border-b border-surface-border"><div class="flex items-center text-tertiary-container" data-rv-stars="text-base">${stars(p.rating, 'text-base fill')}</div><span class="font-bold text-body-md text-price-primary" data-rv-avg>${p.rating.toFixed(1)}</span><span class="text-outline">·</span><a class="text-primary hover:underline text-body-sm font-body-sm" data-rv-count="paren" href="#reviews">(${p.reviews} Customer Reviews)</a></div>
 <div class="mt-4 flex items-baseline gap-3 flex-wrap"><span class="text-headline-xl-mobile md:text-headline-xl font-headline-xl text-price-primary">${kes(p.price)}</span>${p.old > p.price ? `<span class="text-price-strikethrough line-through text-body-lg font-body-lg">${kes(p.old)}</span><span class="bg-tertiary-fixed text-on-tertiary-fixed font-bold text-label-sm font-label-sm px-2.5 py-1 rounded-md">Save ${kes(saved)}</span>` : ''}</div>
 <div class="mt-3 p-3 bg-surface-subtle border border-surface-border rounded-lg flex items-start gap-2.5">${ic('inventory', 'text-success mt-0.5')}<div><div class="text-body-sm font-bold text-price-primary">${esc(p.sub || 'Available at Jamia Shopping Mall')}</div><div class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">${ic('schedule', 'text-sm text-tertiary-container')}<span>Order today for <strong>Same-Day Express Delivery</strong> in Nairobi</span></div></div></div>
 <div class="mt-5"><div class="flex justify-between items-center mb-2"><span class="text-label-md font-label-md text-price-primary">Select Storage &amp; RAM:</span><span class="text-body-sm text-primary font-medium">Selected: ${stor}</span></div><div class="grid grid-cols-3 gap-2">${variants.slice(0, 3).map(variantBtn).join('')}</div></div>
@@ -536,7 +536,7 @@ ${D.colors && D.colors.length ? `<div class="mt-5"><div class="flex justify-betw
 <div class="bg-surface-canvas rounded-xl border border-surface-border shadow-sm overflow-hidden divide-y divide-surface-border">${specGroups.map(g => `<div class="p-4 sm:p-5"><h3 class="text-headline-sm font-headline-sm text-price-primary flex items-center gap-2 mb-3">${ic(g.icon, 'text-primary')}${esc(g.title)}</h3><dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-body-sm">${g.items.map(it => `<div class="bg-surface-subtle p-2.5 rounded border border-surface-border/60"><dt class="text-outline text-[11px] font-bold uppercase">${esc(it[0])}</dt><dd class="text-price-primary font-semibold mt-0.5">${esc(it[1])}</dd></div>`).join('')}</dl></div>`).join('')}</div></section>
 <section class="mb-12 scroll-mt-20" id="reviews"><div class="bg-surface-canvas rounded-xl p-5 lg:p-6 border border-surface-border shadow-sm">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 ${reviews.length ? 'pb-6 border-b border-surface-border' : ''}">
-<div class="flex items-center gap-4"><div class="text-center"><div class="text-4xl font-extrabold text-price-primary">${p.rating.toFixed(1)}</div><div class="flex items-center text-tertiary-container mt-1 justify-center">${stars(p.rating, 'text-lg fill')}</div><div class="text-[12px] text-outline mt-1 font-medium">${p.reviews} Customer Reviews</div></div>${ratingBars}</div>
+<div class="flex items-center gap-4"><div class="text-center"><div class="text-4xl font-extrabold text-price-primary" data-rv-avg>${p.rating.toFixed(1)}</div><div class="flex items-center text-tertiary-container mt-1 justify-center" data-rv-stars="text-lg">${stars(p.rating, 'text-lg fill')}</div><div class="text-[12px] text-outline mt-1 font-medium" data-rv-count="plain">${p.reviews} Customer Reviews</div></div>${ratingBars}</div>
 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"><button class="bg-surface-subtle hover:bg-surface-container text-primary font-bold text-body-sm px-4 py-2 rounded-lg border border-surface-border active:scale-95 transition-all text-center" data-write-review type="button">Write a Review</button></div></div>
 ${reviews.length ? `<div class="divide-y divide-surface-border mt-4">${reviews.map(r => `<div class="py-4"><div class="flex justify-between items-start"><div><div class="flex items-center gap-2"><span class="font-bold text-body-md text-price-primary">${esc(r.name)}</span><span class="inline-flex items-center gap-1 text-[11px] font-bold text-mpesa-green bg-mpesa-green/10 px-2 py-0.5 rounded">${ic('check_circle', 'text-xs')}Verified Buyer (${esc(r.city)})</span></div><div class="flex items-center text-tertiary-container mt-1">${stars(r.rating || 5, 'text-sm fill')}</div></div><span class="text-outline text-body-sm">${esc(r.when)}</span></div><p class="text-body-md text-on-surface mt-2 leading-relaxed">"${esc(r.text)}"</p></div>`).join('')}</div>` : ''}
 <div id="dbReviews"></div>
@@ -843,10 +843,22 @@ ${afterAuth ? '<p class="mt-3 text-body-sm text-primary text-center font-bold">S
 /* ---------- Customer reviews (stored in the database) ---------- */
 const starRow = (n, c = 'text-sm') => Array.from({length: 5}, (_, i) => `<span class="material-symbols-outlined ${c} text-tertiary-container" style="font-variation-settings:'FILL' ${i < n ? 1 : 0};">star</span>`).join('');
 const niceDate = d => { try { return new Date(d).toLocaleDateString('en-KE', {day: 'numeric', month: 'short', year: 'numeric'}); } catch (e) { return ''; } };
+/* Header numbers = the product's stored rating/count plus the real reviews customers posted on this page */
+function updateReviewStats(p, rows) {
+  if (p._baseN == null) { p._baseN = p.reviews || 0; p._baseR = p.rating || 0; }
+  const n = p._baseN + rows.length;
+  const avg = n ? (p._baseR * p._baseN + rows.reduce((t, r) => t + r.rating, 0)) / n : 0;
+  const starIcons = (r, c) => Array.from({length: 5}, (_, i) => `<span class="material-symbols-outlined ${c} text-tertiary-container" style="font-variation-settings:'FILL' 1;">${r >= i + 0.75 ? 'star' : r >= i + 0.25 ? 'star_half' : 'star_outline'}</span>`).join('');
+  const word = n === 1 ? 'Customer Review' : 'Customer Reviews';
+  $$('[data-rv-avg]').forEach(el => { el.textContent = avg.toFixed(1); });
+  $$('[data-rv-stars]').forEach(el => { el.innerHTML = starIcons(avg, el.dataset.rvStars); });
+  $$('[data-rv-count]').forEach(el => { el.textContent = el.dataset.rvCount === 'paren' ? `(${n} ${word})` : `${n} ${word}`; });
+}
 async function loadDbReviews(pid) {
   const box = $('#dbReviews'); if (!box) return;
   try {
     const rows = await sbFetch('/rest/v1/reviews?select=author_name,rating,body,created_at&order=created_at.desc&limit=100&product_id=eq.' + encodeURIComponent(pid), {method: 'GET'});
+    if (currentProduct && currentProduct.id === pid) updateReviewStats(currentProduct, rows || []);
     if (!rows || !rows.length) { box.innerHTML = ''; return; }
     const avg = rows.reduce((t, r) => t + r.rating, 0) / rows.length;
     box.innerHTML = `<div class="mt-4 pt-4 border-t border-surface-border"><h3 class="text-label-md font-bold text-price-primary">Reviews from our customers <span class="text-secondary font-normal">(${rows.length} · ${avg.toFixed(1)} average)</span></h3>

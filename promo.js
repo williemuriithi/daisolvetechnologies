@@ -18,11 +18,10 @@
     p.promo = true;
   });
 
-  /* 2. popup with countdown, home page only, once per visit */
+  /* 2. popup with countdown, home page only, on every page load */
   function ready(f) { document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', f) : f(); }
   ready(function () {
     if (!document.body || document.body.dataset.page !== 'home') return;
-    try { if (sessionStorage.getItem('dai_bn_seen')) return; } catch (e) {}
     setTimeout(show, 900);
   });
 
@@ -52,7 +51,6 @@
       '<p style="font-size:12px;margin-top:4px">Ends ' + endTxt + '</p>' +
       '<a class="bnC" href="/shop">Shop the sale</a><button class="bnN" type="button">Maybe later</button></div>';
     document.body.appendChild(ov);
-    try { sessionStorage.setItem('dai_bn_seen', '1'); } catch (e) {}
     var timer;
     function close() { clearInterval(timer); ov.remove(); css.remove(); document.removeEventListener('keydown', key); }
     function key(e) { if (e.key === 'Escape') close(); }
