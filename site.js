@@ -160,7 +160,7 @@ function openModal(html, wide) {
   return box;
 }
 function closeModal(silent) {
-  afterAuth = null;
+  afterAuth = null; afterAuthInfo = null;
   const root = $('#modalRoot');
   root.classList.add('hidden'); root.classList.remove('flex');
   if (!silent && $('#ovl').classList.contains('hidden')) lockScroll(false);
@@ -761,7 +761,24 @@ async function verifySession() {
   try { await sbFetch('/auth/v1/user', {method: 'GET'}, t); }
   catch (e) { if (e.status === 401 || e.status === 403) clearSession(); }
 }
-let afterAuth = null;   // runs once after a successful sign in (e.g. open the review form)
+let afterAuth = null, afterAuthInfo = null;   // what to do once signed in (e.g. open the review form), and a description of it we can save
+/* The confirmation email link sends people back to the page they signed up on with the session in the URL hash.
+   Grab it now (before the page's own hash routing runs) and clean the address bar. */
+const AUTH_HASH = /access_token=|error_code=|[#&]error=/.test(location.hash) ? location.hash : '';
+if (AUTH_HASH) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+async function finishEmailConfirm() {
+  if (!AUTH_HASH) return;
+  const q = new URLSearchParams(AUTH_HASH.replace(/^#/, ''));
+  if (q.get('error') || !q.get('access_token')) { toast('That confirmation link has expired or was already used. Try signing in.'); openAccount('in'); return; }
+  try {
+    const u = await sbFetch('/auth/v1/user', {method: 'GET'}, q.get('access_token'));
+    setSession({access_token: q.get('access_token'), refresh_token: q.get('refresh_token'), expires_in: +q.get('expires_in') || 3600, user: u});
+  } catch (e) { toast('We could not finish signing you in. Please sign in with your email and password.'); openAccount('in'); return; }
+  toast(`Email confirmed. Welcome, ${session.name.split(' ')[0]}!`);
+  const pend = store.get('pending', null); store.set('pending', null);
+  if (pend && Date.now() - pend.t < 864e5 && pend.kind === 'review' && currentProduct && currentProduct.id === pend.pid) openReviewForm(currentProduct);
+  else if ($('#accountPage')) accountView();
+}
 function updateAccountLabel() {
   const l = $('a[href="#account"] span.text-label-md'); if (l) l.textContent = session ? session.name.split(' ')[0] : 'Account';
 }
@@ -800,12 +817,13 @@ ${afterAuth ? '<p class="mt-3 text-body-sm text-primary text-center font-bold">S
       setErr(form, 'pw', v('pw').length < 6 ? 'Use at least 6 characters.' : '');
       if ($('[data-err]:not(.hidden)', form)) { firstError(form); return; }
       btn.disabled = true; btn.textContent = 'Creating account...';
-      try { d = await sbFetch('/auth/v1/signup', {method: 'POST', body: JSON.stringify({email: v('id').toLowerCase(), password: v('pw'), data: {name: v('name'), phone: v('phone')}})}); }
+      try { d = await sbFetch('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname + location.search), {method: 'POST', body: JSON.stringify({email: v('id').toLowerCase(), password: v('pw'), data: {name: v('name'), phone: v('phone')}})}); }
       catch (err) { fail(err.code === 'weak_password' ? 'pw' : 'id', err); return; }
       const u = d.user || d;
       if (u && Array.isArray(u.identities) && !u.identities.length) { fail('id', new Error(AUTH_ERR.user_already_exists)); return; }
-      if (!d.access_token) {   // email confirmation is switched on: the account exists, they just need to click the link
-        box.innerHTML = `<div class="p-6 text-center"><span class="material-symbols-outlined text-5xl text-mpesa-green">mark_email_read</span><h3 class="mt-2 text-headline-md font-headline-md text-price-primary">Check your email</h3><p class="mt-2 text-body-md text-secondary">Your account is created. We sent a confirmation link to <b>${esc(v('id'))}</b>. Open it, then come back and sign in.</p><button class="mt-5 h-11 px-6 bg-primary-container text-white rounded-lg text-label-md font-bold hover:bg-primary" data-auth-tab="in" type="button">Go to sign in</button></div>`;
+      if (!d.access_token) {   // email confirmation is switched on
+        store.set('pending', afterAuthInfo ? Object.assign({t: Date.now()}, afterAuthInfo) : null);
+        box.innerHTML = `<div class="p-6 text-center"><span class="material-symbols-outlined text-5xl text-mpesa-green">mark_email_read</span><h3 class="mt-2 text-headline-md font-headline-md text-price-primary">Check your email</h3><p class="mt-2 text-body-md text-secondary">Your account is created. We sent a confirmation link to <b>${esc(v('id'))}</b>. Open it and you will be signed in and brought straight back to this page.</p><button class="mt-5 h-11 px-6 bg-primary-container text-white rounded-lg text-label-md font-bold hover:bg-primary" data-auth-tab="in" type="button">Go to sign in</button></div>`;
         return;
       }
     } else {
@@ -818,7 +836,7 @@ ${afterAuth ? '<p class="mt-3 text-body-sm text-primary text-center font-bold">S
     }
     setSession(d);
     toast(`Welcome, ${session.name.split(' ')[0]}`);
-    const next = afterAuth; afterAuth = null;
+    const next = afterAuth; afterAuth = null; afterAuthInfo = null;
     if (next) { closeModal(); next(); } else accountView();
   });
 }
@@ -836,7 +854,7 @@ async function loadDbReviews(pid) {
   } catch (e) { /* reviews are optional: leave the page as is */ }
 }
 function startReview(p) {
-  if (!session || !session.token) { afterAuth = () => openReviewForm(p); openAccount('in'); return; }
+  if (!session || !session.token) { afterAuth = () => openReviewForm(p); afterAuthInfo = {kind: 'review', pid: p.id}; openAccount('in'); return; }
   openReviewForm(p);
 }
 function openReviewForm(p) {
@@ -862,7 +880,7 @@ function openReviewForm(p) {
       await sbFetch('/rest/v1/reviews?on_conflict=product_id,user_id', {method: 'POST', headers: {Prefer: 'resolution=merge-duplicates,return=minimal'}, body: JSON.stringify({product_id: p.id, rating, body})}, tk);
     } catch (err) {
       btn.disabled = false; btn.textContent = 'Post review';
-      if (err.code === 'not_signed_in') { clearSession(); closeModal(); afterAuth = () => openReviewForm(p); openAccount('in'); toast('Please sign in again'); return; }
+      if (err.code === 'not_signed_in') { clearSession(); closeModal(); afterAuth = () => openReviewForm(p); afterAuthInfo = {kind: 'review', pid: p.id}; openAccount('in'); toast('Please sign in again'); return; }
       setErr(form, 'body', err.message); return;
     }
     closeModal(); toast('Thank you! Your review is live.'); loadDbReviews(p.id);
@@ -928,7 +946,7 @@ const INFO = {
   delivery: ['Same-day Nairobi delivery', `${li(['Nairobi: delivery within about 3 hours once your payment is confirmed.', 'Outside Nairobi: we dispatch by parcel to your town, anywhere in Kenya.', 'International shipping is available on request.', 'The delivery fee depends on your location. We confirm it on WhatsApp before you pay.', 'Free collection at Jamia Shopping Mall, Nairobi CBD. Bring your ID and order ID.'])}<p class="mt-3">Open Mon – Sat 8:00 AM – 7:30 PM and Sun 10:00 AM – 4:00 PM.</p>`],
   trade: ['Trade-in program', `<p>Bring your current phone, get its value as credit toward a new one, and pay the balance by M-PESA Pochi, bank transfer, card or PayPal. We inspect the screen, body, battery and function, and confirm the final value at the shop.</p><button class="mt-4 h-11 w-full bg-primary-container text-white rounded-lg text-label-md font-bold" data-act="trade" type="button">Request a valuation</button>`],
   terms: ['Terms of service', li(['Prices are in Kenya shillings (KSh) and depend on stock. We confirm availability before you pay.', 'An order is confirmed once we have confirmed your payment.', 'We accept M-PESA Pochi la Biashara, bank transfer, Visa, Mastercard, PayPal and other international providers on request.', 'You may inspect your phone and check its IMEI and serial number when you collect or receive it.', 'Warranty is provided by the manufacturer under the warranty policy.', 'Questions? Call or WhatsApp +254 790 835039.'])],
-  privacy: ['Privacy policy', `<p>We collect your name, phone number, email and delivery address only to process your order and support you afterwards. We do not sell your details.</p>${li(['Your cart and wishlist are saved in your browser. Your account details and reviews are stored securely in our database.', 'When you send an order on WhatsApp, it is handled under WhatsApp\'s own terms.', 'Card details are never entered or stored on this website.', 'To have your details removed, message us on WhatsApp.'])}`]
+  privacy: ['Privacy policy', `<p>We collect your name, phone number, email and delivery address only to process your order and support you afterwards. We do not sell your details.</p>${li(['Your cart and wishlist are saved in your browser. Your account details and reviews are stored securely in our database.', 'When you send an order on WhatsApp, it is handled under WhatsApp\'s own terms.', 'Card details are never entered or stored on this website.', 'We use cookies and similar browser storage to keep you signed in, remember your cart and wishlist, and remember your cookie choice. We do not use advertising cookies. <button class="text-primary font-bold underline" data-cookie-settings type="button">Change your cookie choice</button>.', 'To have your details removed, message us on WhatsApp.'])}`]
 };
 function openInfo(key) {
   const [title, body] = INFO[key];
@@ -1181,6 +1199,7 @@ function init() {
   renderProductPage();
   if ($('#wishPage')) renderWish();
   if ($('#accountPage')) openAccount();
+  finishEmailConfirm();
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
