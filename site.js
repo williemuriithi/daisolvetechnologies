@@ -160,6 +160,7 @@ function openModal(html, wide) {
   return box;
 }
 function closeModal(silent) {
+  afterAuth = null;
   const root = $('#modalRoot');
   root.classList.add('hidden'); root.classList.remove('flex');
   if (!silent && $('#ovl').classList.contains('hidden')) lockScroll(false);
@@ -536,8 +537,9 @@ ${D.colors && D.colors.length ? `<div class="mt-5"><div class="flex justify-betw
 <section class="mb-12 scroll-mt-20" id="reviews"><div class="bg-surface-canvas rounded-xl p-5 lg:p-6 border border-surface-border shadow-sm">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 ${reviews.length ? 'pb-6 border-b border-surface-border' : ''}">
 <div class="flex items-center gap-4"><div class="text-center"><div class="text-4xl font-extrabold text-price-primary">${p.rating.toFixed(1)}</div><div class="flex items-center text-tertiary-container mt-1 justify-center">${stars(p.rating, 'text-lg fill')}</div><div class="text-[12px] text-outline mt-1 font-medium">${p.reviews} Customer Reviews</div></div>${ratingBars}</div>
-<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"><a class="bg-surface-subtle hover:bg-surface-container text-primary font-bold text-body-sm px-4 py-2 rounded-lg border border-surface-border active:scale-95 transition-all text-center" href="${waLink('Hello Daisolve, I bought the ' + p.name + ' and would like to leave a review.')}" rel="noopener" target="_blank">Write a Review</a></div></div>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"><button class="bg-surface-subtle hover:bg-surface-container text-primary font-bold text-body-sm px-4 py-2 rounded-lg border border-surface-border active:scale-95 transition-all text-center" data-write-review type="button">Write a Review</button></div></div>
 ${reviews.length ? `<div class="divide-y divide-surface-border mt-4">${reviews.map(r => `<div class="py-4"><div class="flex justify-between items-start"><div><div class="flex items-center gap-2"><span class="font-bold text-body-md text-price-primary">${esc(r.name)}</span><span class="inline-flex items-center gap-1 text-[11px] font-bold text-mpesa-green bg-mpesa-green/10 px-2 py-0.5 rounded">${ic('check_circle', 'text-xs')}Verified Buyer (${esc(r.city)})</span></div><div class="flex items-center text-tertiary-container mt-1">${stars(r.rating || 5, 'text-sm fill')}</div></div><span class="text-outline text-body-sm">${esc(r.when)}</span></div><p class="text-body-md text-on-surface mt-2 leading-relaxed">"${esc(r.text)}"</p></div>`).join('')}</div>` : ''}
+<div id="dbReviews"></div>
 </div></section>
 <section class="mb-12"><div class="mb-4"><h2 class="text-headline-md md:text-headline-lg font-headline-md text-price-primary">Frequently Asked Questions</h2><p class="text-body-sm text-on-surface-variant">Questions about buying this phone in Kenya? Here are the answers.</p></div>
 <div class="space-y-3">${faqs.map(f => `<details class="group bg-surface-canvas rounded-xl border border-surface-border p-4 [&_summary::-webkit-details-marker]:none"><summary class="flex items-center justify-between cursor-pointer font-bold text-body-md text-price-primary"><span>${esc(f[0])}</span>${ic('expand_more', 'text-primary group-open:rotate-180 transition-transform duration-200')}</summary><p class="mt-3 text-body-sm text-on-surface-variant leading-relaxed border-t border-surface-border/60 pt-3">${esc(f[1])}</p></details>`).join('')}</div></section>
@@ -554,6 +556,7 @@ ${reviews.length ? `<div class="divide-y divide-surface-border mt-4">${reviews.m
     if (t.closest('[data-pd-add]')) { addToCart(p.id, pageQty); return; }
     if (t.closest('[data-pd-buy]')) { addToCart(p.id, pageQty, true); openCheckout(); return; }
     if (t.closest('#pdWish')) { toggleWish(p.id); return; }
+    if (t.closest('[data-write-review]')) { startReview(p); return; }
     const ra = t.closest('[data-rel-add]'); if (ra) { addToCart(ra.dataset.relAdd, 1); return; }
     const th = t.closest('[data-pd-thumb]');
     if (th) {
@@ -573,6 +576,7 @@ ${reviews.length ? `<div class="divide-y divide-surface-border mt-4">${reviews.m
     if (t.closest('[data-pd-zoom]')) window.open($('#pdMainImg').src, '_blank', 'noopener');
   });
   syncProductHeart();
+  loadDbReviews(p.id);
 }
 
 /* ---------- Form helpers ---------- */
@@ -717,10 +721,44 @@ function openTrack(prefill) {
 }
 
 /* ---------- Account (stored on this device) ---------- */
-async function sha(s) {
-  try { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join(''); }
-  catch (e) { return btoa(unescape(encodeURIComponent(s))); }
+/* ---------- Database accounts + reviews (Supabase RPC, no email verification) ---------- */
+const DB_ERR = {
+  invalid_name: 'Enter your full name.', invalid_phone: 'Enter a valid phone number.', invalid_email: 'Enter a valid email address.',
+  weak_password: 'Use at least 6 characters.', email_taken: 'This email already has an account. Sign in instead.',
+  no_account: 'No account found with these details.', bad_password: 'Incorrect password.',
+  not_signed_in: 'Please sign in again.', invalid_rating: 'Choose a star rating.', review_too_short: 'Write at least a few words.',
+  review_too_long: 'Please keep your review under 1500 characters.'
+};
+async function rpc(fn, args) {
+  const S = window.DAI_SUPABASE;
+  if (!S) throw new Error('Could not reach the database. Please refresh and try again.');
+  let r;
+  try {
+    r = await fetch(S.url + '/rest/v1/rpc/' + fn, {method: 'POST', headers: {apikey: S.key, Authorization: 'Bearer ' + S.key, 'Content-Type': 'application/json'}, body: JSON.stringify(args || {})});
+  } catch (e) { throw new Error('No internet connection. Please try again.'); }
+  let d = null; try { d = await r.json(); } catch (e) {}
+  if (!r.ok) {
+    const m = (d && d.message) || '';
+    const e = new Error(DB_ERR[m] || (/function .* does not exist|PGRST202/.test(m + (d && d.code || '')) ? 'Accounts are not set up yet. Please try again later.' : 'Something went wrong. Please try again.'));
+    e.code = m; throw e;
+  }
+  return d;
 }
+function setSession(res) {
+  const c = res.customer;
+  session = {id: c.id, name: c.name, phone: c.phone, email: c.email, token: res.token};
+  store.set('session', session); updateAccountLabel();
+}
+function clearSession() { session = null; store.set('session', null); updateAccountLabel(); }
+async function verifySession() {
+  if (!session) return;
+  if (!session.token) { clearSession(); return; }   // old device-only account: sign in again
+  try {
+    const c = await rpc('customer_me', {p_token: session.token});
+    if (!c) clearSession(); else { session = Object.assign({}, c, {token: session.token}); store.set('session', session); updateAccountLabel(); }
+  } catch (e) { /* offline: keep the saved session */ }
+}
+let afterAuth = null;   // runs once after a successful sign in / sign up (e.g. open the review form)
 function updateAccountLabel() {
   const l = $('a[href="#account"] span.text-label-md'); if (l) l.textContent = session ? session.name.split(' ')[0] : 'Account';
 }
@@ -743,33 +781,81 @@ ${fld('Password', 'pw', 'password', `autocomplete="${tab === 'in' ? 'current-pas
 <button class="w-full h-11 bg-primary-container text-white rounded-lg text-label-md font-bold hover:bg-primary active:scale-95 transition" type="submit">${tab === 'in' ? 'Sign in' : 'Create account'}</button>
 </form>
 <p class="mt-4 text-body-sm text-secondary text-center">${tab === 'in' ? 'New here?' : 'Already registered?'} <button class="text-primary font-bold underline" data-auth-tab="${tab === 'in' ? 'up' : 'in'}" type="button">${tab === 'in' ? 'Create an account' : 'Sign in'}</button></p>
-<p class="mt-3 text-[11px] text-secondary text-center">Accounts are saved on this device only.</p></div>`);
+${afterAuth ? '<p class="mt-3 text-body-sm text-primary text-center font-bold">Sign in to write your review.</p>' : ''}</div>`);
   box.addEventListener('click', e => { const t = e.target.closest('[data-auth-tab]'); if (t) openAccount(t.dataset.authTab); });
   const form = $('#authForm', box);
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const v = n => form.elements[n] ? form.elements[n].value.trim() : '';
-    const users = store.get('users', []);
+    const btn = $('button[type="submit"]', form), label = btn.textContent;
+    let res;
     if (tab === 'up') {
       setErr(form, 'name', v('name').length < 2 ? 'Enter your full name.' : '');
       setErr(form, 'phone', !okPhone(v('phone')) ? 'Enter a valid phone number.' : '');
-      setErr(form, 'id', !okEmail(v('id')) ? 'Enter a valid email address.' : (users.some(u => u.email === v('id').toLowerCase()) ? 'This email already has an account. Sign in instead.' : ''));
+      setErr(form, 'id', !okEmail(v('id')) ? 'Enter a valid email address.' : '');
       setErr(form, 'pw', v('pw').length < 6 ? 'Use at least 6 characters.' : '');
       if ($('[data-err]:not(.hidden)', form)) { firstError(form); return; }
-      const u = {id: 'u' + Date.now().toString(36), name: v('name'), phone: v('phone'), email: v('id').toLowerCase(), pw: await sha(v('pw'))};
-      users.push(u); store.set('users', users);
-      session = {id: u.id, name: u.name, phone: u.phone, email: u.email};
+      btn.disabled = true; btn.textContent = 'Creating account...';
+      try { res = await rpc('customer_signup', {p_name: v('name'), p_phone: v('phone'), p_email: v('id'), p_password: v('pw')}); }
+      catch (err) { setErr(form, err.code === 'email_taken' ? 'id' : err.code === 'invalid_phone' ? 'phone' : err.code === 'invalid_name' ? 'name' : err.code === 'weak_password' ? 'pw' : 'id', err.message); firstError(form); btn.disabled = false; btn.textContent = label; return; }
     } else {
-      const key = v('id').toLowerCase(), digits = v('id').replace(/\D/g, '');
-      const u = users.find(x => x.email === key || (digits.length >= 9 && x.phone.replace(/\D/g, '').slice(-9) === digits.slice(-9)));
-      setErr(form, 'id', !v('id') ? 'Enter your email or phone number.' : (!u ? 'No account found with these details.' : ''));
-      setErr(form, 'pw', !v('pw') ? 'Enter your password.' : (u && u.pw !== await sha(v('pw')) ? 'Incorrect password.' : ''));
+      setErr(form, 'id', !v('id') ? 'Enter your email or phone number.' : '');
+      setErr(form, 'pw', !v('pw') ? 'Enter your password.' : '');
       if ($('[data-err]:not(.hidden)', form)) { firstError(form); return; }
-      session = {id: u.id, name: u.name, phone: u.phone, email: u.email};
+      btn.disabled = true; btn.textContent = 'Signing in...';
+      try { res = await rpc('customer_login', {p_login: v('id'), p_password: v('pw')}); }
+      catch (err) { setErr(form, err.code === 'bad_password' ? 'pw' : 'id', err.message); firstError(form); btn.disabled = false; btn.textContent = label; return; }
     }
-    store.set('session', session); updateAccountLabel();
+    setSession(res);
     toast(`Welcome, ${session.name.split(' ')[0]}`);
-    accountView();
+    const next = afterAuth; afterAuth = null;
+    if (next) { closeModal(); next(); } else accountView();
+  });
+}
+/* ---------- Customer reviews (stored in the database) ---------- */
+const starRow = (n, c = 'text-sm') => Array.from({length: 5}, (_, i) => `<span class="material-symbols-outlined ${c} text-tertiary-container" style="font-variation-settings:'FILL' ${i < n ? 1 : 0};">star</span>`).join('');
+const niceDate = d => { try { return new Date(d).toLocaleDateString('en-KE', {day: 'numeric', month: 'short', year: 'numeric'}); } catch (e) { return ''; } };
+async function loadDbReviews(pid) {
+  const box = $('#dbReviews'); if (!box) return;
+  try {
+    const rows = await rpc('list_reviews', {p_product_id: pid});
+    if (!rows || !rows.length) { box.innerHTML = ''; return; }
+    const avg = rows.reduce((t, r) => t + r.rating, 0) / rows.length;
+    box.innerHTML = `<div class="mt-4 pt-4 border-t border-surface-border"><h3 class="text-label-md font-bold text-price-primary">Reviews from our customers <span class="text-secondary font-normal">(${rows.length} · ${avg.toFixed(1)} average)</span></h3>
+<div class="divide-y divide-surface-border">${rows.map(r => `<div class="py-4"><div class="flex justify-between items-start gap-3"><div><span class="font-bold text-body-md text-price-primary">${esc(r.author_name)}</span><div class="flex items-center mt-1">${starRow(r.rating)}</div></div><span class="text-outline text-body-sm whitespace-nowrap">${esc(niceDate(r.created_at))}</span></div><p class="text-body-md text-on-surface mt-2 leading-relaxed whitespace-pre-line">${esc(r.body)}</p></div>`).join('')}</div></div>`;
+  } catch (e) { /* reviews are optional: leave the page as is */ }
+}
+function startReview(p) {
+  if (!session || !session.token) { afterAuth = () => openReviewForm(p); openAccount('in'); return; }
+  openReviewForm(p);
+}
+function openReviewForm(p) {
+  const box = openModal(`<form class="p-5 sm:p-6 space-y-3" id="reviewForm" novalidate="">
+<h3 class="text-headline-md font-headline-md text-price-primary pr-8">Review ${esc(p.name)}</h3>
+<p class="text-body-sm text-secondary">Posting as <b>${esc(session.name)}</b>.</p>
+<div><span class="block text-label-md mb-1">Your rating</span><div class="flex gap-1" id="rvStars" role="radiogroup" aria-label="Rating">${[1, 2, 3, 4, 5].map(n => `<button aria-label="${n} star${n > 1 ? 's' : ''}" class="p-0.5" data-star="${n}" type="button"><span class="material-symbols-outlined text-3xl text-tertiary-container" style="font-variation-settings:'FILL' 0;">star</span></button>`).join('')}</div><p class="text-xs text-danger mt-1 hidden" data-err="rating"></p></div>
+<div><label class="block text-label-md mb-1" for="rv_body">Your review</label><textarea class="${inputCls} h-32 py-2" id="rv_body" maxlength="1500" name="body" placeholder="What did you like or dislike about this phone?"></textarea><p class="text-xs text-danger mt-1 hidden" data-err="body"></p></div>
+<button class="w-full h-11 bg-primary-container text-white rounded-lg text-label-md font-bold hover:bg-primary active:scale-95 transition" type="submit">Post review</button></form>`);
+  let rating = 0;
+  const paint = n => $$('#rvStars [data-star]', box).forEach((b, i) => { b.firstChild.style.fontVariationSettings = `'FILL' ${i < n ? 1 : 0}`; });
+  $('#rvStars', box).addEventListener('click', e => { const b = e.target.closest('[data-star]'); if (b) { rating = +b.dataset.star; paint(rating); setErr($('#reviewForm', box), 'rating', ''); } });
+  const form = $('#reviewForm', box);
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = form.elements.body.value.trim();
+    setErr(form, 'rating', rating ? '' : 'Choose a star rating.');
+    setErr(form, 'body', body.length < 5 ? 'Write at least a few words.' : '');
+    if ($('[data-err]:not(.hidden)', form)) return;
+    const btn = $('button[type="submit"]', form); btn.disabled = true; btn.textContent = 'Posting...';
+    try {
+      await rpc('submit_review', {p_token: session.token, p_product_id: p.id, p_rating: rating, p_body: body});
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Post review';
+      if (err.code === 'not_signed_in') { clearSession(); closeModal(); afterAuth = () => openReviewForm(p); openAccount('in'); toast('Please sign in again'); return; }
+      setErr(form, 'body', err.message); return;
+    }
+    closeModal(); toast('Thank you! Your review is live.'); loadDbReviews(p.id);
+    const sec = $('#reviews'); if (sec) sec.scrollIntoView({behavior: 'smooth', block: 'start'});
   });
 }
 function accountView() {
@@ -782,7 +868,7 @@ function accountView() {
 <button class="mt-2 w-full h-10 text-danger text-label-md font-bold hover:bg-error-container rounded-lg" data-signout type="button">Sign out</button></div>`);
   box.addEventListener('click', e => {
     const t = e.target.closest('[data-track]'); if (t) openTrack(t.dataset.track);
-    if (e.target.closest('[data-signout]')) { session = null; store.set('session', null); updateAccountLabel(); closeModal(); toast('You have signed out'); if ($('#accountPage')) openAccount(); }
+    if (e.target.closest('[data-signout]')) { const tk = session && session.token; if (tk) rpc('customer_logout', {p_token: tk}).catch(() => {}); clearSession(); closeModal(); toast('You have signed out'); if ($('#accountPage')) openAccount(); }
   });
 }
 
@@ -831,7 +917,7 @@ const INFO = {
   delivery: ['Same-day Nairobi delivery', `${li(['Nairobi: delivery within about 3 hours once your payment is confirmed.', 'Outside Nairobi: we dispatch by parcel to your town, anywhere in Kenya.', 'International shipping is available on request.', 'The delivery fee depends on your location. We confirm it on WhatsApp before you pay.', 'Free collection at Jamia Shopping Mall, Nairobi CBD. Bring your ID and order ID.'])}<p class="mt-3">Open Mon – Sat 8:00 AM – 7:30 PM and Sun 10:00 AM – 4:00 PM.</p>`],
   trade: ['Trade-in program', `<p>Bring your current phone, get its value as credit toward a new one, and pay the balance by M-PESA Pochi, bank transfer, card or PayPal. We inspect the screen, body, battery and function, and confirm the final value at the shop.</p><button class="mt-4 h-11 w-full bg-primary-container text-white rounded-lg text-label-md font-bold" data-act="trade" type="button">Request a valuation</button>`],
   terms: ['Terms of service', li(['Prices are in Kenya shillings (KSh) and depend on stock. We confirm availability before you pay.', 'An order is confirmed once we have confirmed your payment.', 'We accept M-PESA Pochi la Biashara, bank transfer, Visa, Mastercard, PayPal and other international providers on request.', 'You may inspect your phone and check its IMEI and serial number when you collect or receive it.', 'Warranty is provided by the manufacturer under the warranty policy.', 'Questions? Call or WhatsApp +254 790 835039.'])],
-  privacy: ['Privacy policy', `<p>We collect your name, phone number, email and delivery address only to process your order and support you afterwards. We do not sell your details.</p>${li(['Your cart, wishlist and account are saved in your browser on this device.', 'When you send an order on WhatsApp, it is handled under WhatsApp\'s own terms.', 'Card details are never entered or stored on this website.', 'To have your details removed, message us on WhatsApp.'])}`]
+  privacy: ['Privacy policy', `<p>We collect your name, phone number, email and delivery address only to process your order and support you afterwards. We do not sell your details.</p>${li(['Your cart and wishlist are saved in your browser. Your account details and reviews are stored securely in our database.', 'When you send an order on WhatsApp, it is handled under WhatsApp\'s own terms.', 'Card details are never entered or stored on this website.', 'To have your details removed, message us on WhatsApp.'])}`]
 };
 function openInfo(key) {
   const [title, body] = INFO[key];
@@ -884,6 +970,7 @@ function init() {
   const grid = $('#productGrid');
   if (grid) readProducts(); else loadStaticProducts();
   updateBadges();
+  verifySession();
 
   // sort option + tabs ids
   const sel = $('#sortSelect');
