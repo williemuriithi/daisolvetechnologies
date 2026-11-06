@@ -7,3 +7,4 @@ SEO: see SEO-NOTES.md. `seo.js` sets per-product/per-article meta + JSON-LD, `si
 Accounts + reviews + admin lock: run `supabase-customers-reviews.sql` once in the Supabase SQL Editor (not deployed to cPanel). Admin emails live in that file (`is_admin()`) and in admin.html (`ADMIN_EMAILS`).
 Black November sale: `promo.js` (edit PCT and END at the top). It marks every phone down and shows the home-page countdown popup; it switches itself off after END.
 Cookie notice: `cookies.js` (consent stored in the dai_consent cookie). Email-confirmation return: add https://www.daisolvetechnologies.co.ke/** under Supabase > Authentication > URL Configuration > Redirect URLs.
+Orders + subscribers in the database: run `supabase-orders.sql` once (after supabase-customers-reviews.sql). Admin reads them from there, so every admin sees the same data.

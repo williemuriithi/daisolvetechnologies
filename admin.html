@@ -191,7 +191,7 @@ tailwind.config = { theme: { extend: {
       <div id="custList" class="space-y-2 max-h-64 overflow-y-auto no-scrollbar"></div>
       <div class="bg-surface-subtle p-3 rounded-lg border border-surface-border flex items-start gap-2.5 text-xs">
         <span class="material-symbols-outlined text-primary mt-0.5">info</span>
-        <div><p class="font-bold text-price-primary">Data lives in this browser</p><p class="text-secondary">Orders and accounts are stored on the device used to shop. Open this page in the same browser to see them. Customers who ordered elsewhere reach you on WhatsApp.</p></div>
+        <div><p class="font-bold text-price-primary">Shared live data</p><p class="text-secondary">Orders, customer accounts and subscribers are stored in the database, so every admin sees exactly the same thing from any device.</p></div>
       </div>
       <div class="flex items-center justify-between text-xs"><span class="text-secondary">Newsletter subscribers</span><strong id="subCount" class="text-price-primary">0</strong></div>
     </div>
@@ -373,15 +373,43 @@ const catalog = window.DAI_CATALOG || [];
 let filter = 'all';
 
 /* admin-only data, kept apart from the order objects the storefront writes */
-const meta = () => store.get('admin_meta', {});      // {orderId: {status, paid}}
-const setMeta = (id, patch) => { const m = meta(); m[id] = Object.assign({status:'pending', paid:false}, m[id], patch); store.set('admin_meta', m); };
-const getMeta = id => Object.assign({status:'pending', paid:false}, meta()[id]);
-const orders = () => store.get('orders', []);
+/* Orders, payment status, customers and subscribers live in the database (same for every admin).
+   The lists below are a cache of what the database returned the last time we asked. */
+let ORD = [], META = {}, PROFILES = [], SUBS = [];
+const getMeta = id => META[id] || {status:'pending', paid:false};
+const orders = () => ORD;
+async function setMeta(id, patch) {
+  await api('orders?id=eq.' + encodeURIComponent(id), {method:'PATCH', headers:{Prefer:'return=minimal'}, body: JSON.stringify(patch)});
+  META[id] = Object.assign({}, getMeta(id), patch);
+}
+async function loadOrders() {
+  const rows = await (await api('orders?select=*&order=created_at.desc&limit=2000')).json();
+  ORD = rows.map(r => Object.assign({}, r.data, {id: r.id, date: (r.data && r.data.date) || r.created_at}));
+  META = {}; rows.forEach(r => { META[r.id] = {status: r.status, paid: r.paid}; });
+}
+async function loadPeople() {
+  try { PROFILES = await (await api('profiles?select=*&order=created_at.desc&limit=2000')).json(); } catch (e) { PROFILES = []; }
+  try { SUBS = await (await api('subscribers?select=email&limit=5000')).json(); } catch (e) { SUBS = []; }
+}
+/* one-time: orders that were saved only in this browser before the database existed are copied up */
+async function migrateLocal() {
+  if (store.get('orders_migrated', false)) return;
+  const local = store.get('orders', []), meta = store.get('admin_meta', {}), subs = store.get('subs', []);
+  try {
+    if (local.length) await api('orders?on_conflict=id', {method:'POST', headers:{Prefer:'resolution=ignore-duplicates,return=minimal'}, body: JSON.stringify(local.map(o => ({id:o.id, created_at:o.date, data:o, status:(meta[o.id]||{}).status || 'pending', paid:!!(meta[o.id]||{}).paid})))});
+    if (subs.length) await api('subscribers?on_conflict=email', {method:'POST', headers:{Prefer:'resolution=ignore-duplicates,return=minimal'}, body: JSON.stringify(subs.map(e => ({email:e})))});
+    store.set('orders_migrated', true);
+  } catch (e) { /* tables not created yet or offline: try again next time */ }
+}
+async function loadAll(quiet) {
+  try { await migrateLocal(); await Promise.all([loadOrders(), loadPeople()]); renderAll(); }
+  catch (e) { if (!quiet) toast('Could not load orders: ' + e.message); }
+}
 
 /* default stock: stable number per product until the manager adjusts it */
 function defaultStock(p) { let h = 0; for (const c of p.id) h = (h * 31 + c.charCodeAt(0)) % 997; return (h % 14) + 1; }
 const stockMap = () => store.get('admin_stock', {});
-const stockOf = p => { const s = stockMap()[p.id]; return s != null ? s : (p.stock != null ? p.stock : defaultStock(p)); };
+const stockOf = p => (p.stock != null ? p.stock : defaultStock(p));   /* from the database, so both admins see the same number */
 const setStock = (id, n) => { const s = stockMap(); s[id] = Math.max(0, n | 0); store.set('admin_stock', s); };
 
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.remove('hidden'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.add('hidden'), 3000); }
@@ -488,12 +516,12 @@ function renderOrders() {
 
 /* ---------- Customers ---------- */
 function renderCustomers() {
-  const users = store.get('users', []);
+  const users = PROFILES.filter(u => !isAdminEmail(u.email));
   const seen = {};
   orders().forEach(o => { const k = String(o.customer.phone).replace(/\D/g, '').slice(-9); (seen[k] = seen[k] || {name:o.customer.name, phone:o.customer.phone, n:0, total:0}); seen[k].n++; seen[k].total += o.total; });
   const buyers = Object.values(seen);
   $('#custCount').textContent = users.length + ' accounts';
-  $('#subCount').textContent = store.get('subs', []).length;
+  $('#subCount').textContent = SUBS.length;
   const rows = [];
   buyers.forEach(b => rows.push(`<div class="p-3 bg-surface-subtle rounded-lg border border-surface-border flex items-center justify-between gap-2"><div class="min-w-0"><p class="font-bold text-price-primary text-sm truncate">${esc(b.name)}</p><p class="text-xs text-secondary">${esc(b.phone)} - ${b.n} order${b.n > 1 ? 's' : ''}</p></div><span class="text-xs font-bold text-price-primary whitespace-nowrap">${kes(b.total)}</span></div>`));
   users.filter(u => !buyers.some(b => String(b.phone).replace(/\D/g, '').slice(-9) === String(u.phone).replace(/\D/g, '').slice(-9))).forEach(u => rows.push(`<div class="p-3 bg-white rounded-lg border border-surface-border"><p class="font-bold text-price-primary text-sm">${esc(u.name)}</p><p class="text-xs text-secondary">${esc(u.email)} - ${esc(u.phone)}</p></div>`));
@@ -526,11 +554,10 @@ function renderInventory() {
 function renderAll() { renderKpis(); renderAwait(); renderTabs(); renderOrders(); renderCustomers(); renderInventory(); }
 
 /* ---------- Actions ---------- */
-function markPaid(id) { setMeta(id, {paid:true}); renderAll(); toast('Order ' + id + ' marked as paid'); }
-function setStatus(id, s) {
+async function markPaid(id) { try { await setMeta(id, {paid:true}); } catch (e) { toast('Could not save: ' + e.message); return; } renderAll(); toast('Order ' + id + ' marked as paid'); }
+async function setStatus(id, s) {
   if (s === 'cancelled' && !confirm('Cancel order ' + id + '?')) return;
-  setMeta(id, {status:s});
-  if (s === 'delivered') setMeta(id, {paid:true});
+  try { await setMeta(id, s === 'delivered' ? {status:s, paid:true} : {status:s}); } catch (e) { toast('Could not save: ' + e.message); return; }
   renderAll(); toast('Order ' + id + ' is now ' + STATUS[s]);
 }
 function waybill(id) {
@@ -550,7 +577,7 @@ function verify() {
   msg.classList.remove('hidden');
   if (!v) { msg.className = 'text-xs text-danger'; msg.textContent = 'Enter an M-PESA code or an order ID first.'; return; }
   const o = orders().find(x => x.id.toUpperCase() === v || (x.ref && x.ref.toUpperCase() === v));
-  if (!o) { msg.className = 'text-xs text-danger'; msg.textContent = 'No order on this device matches ' + v + '. Check the code against your M-PESA message or ask the customer on WhatsApp.'; return; }
+  if (!o) { msg.className = 'text-xs text-danger'; msg.textContent = 'No order matches ' + v + '. Check the code against your M-PESA message or ask the customer on WhatsApp.'; return; }
   if (getMeta(o.id).paid) { msg.className = 'text-xs text-secondary'; msg.textContent = 'Order ' + o.id + ' is already marked as paid.'; return; }
   markPaid(o.id);
   msg.className = 'text-xs text-mpesa-green font-semibold';
@@ -585,7 +612,7 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeM
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 $('#verifyBtn').onclick = verify;
 $('#refInput').addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
-$('#refreshBtn').onclick = () => { renderAll(); toast('Refreshed'); };
+$('#refreshBtn').onclick = async () => { await loadAll(); toast('Refreshed'); };
 $('#invSearch').addEventListener('input', renderInventory);
 $('#invFilter').addEventListener('change', renderInventory);
 $('#exportOrders').onclick = () => {
@@ -636,7 +663,8 @@ function authUi() {
   $('#prodAdmin').classList.toggle('hidden', !s);
   $('#blogAdmin').classList.toggle('hidden', !s);
   $('#authBar').innerHTML = s ? `Signed in as <b>${esc(s.email || '')}</b> - <button id="lgOut" class="text-primary hover:underline font-semibold">Sign out</button>` : 'Not signed in';
-  if (s) { reloadCatalog().catch(e => toast('Could not load products: ' + e.message)); loadArts(); }
+  if (s) { reloadCatalog().catch(e => toast('Could not load products: ' + e.message)); loadArts(); loadAll(); }
+  else { ORD = []; META = {}; PROFILES = []; SUBS = []; }
 }
 function renderProducts() {
   const q = $('#pSearch').value.trim().toLowerCase();
@@ -800,6 +828,7 @@ document.addEventListener('change', e => {
 });
 
 authUi();
+setInterval(() => { if (sess() && !document.hidden) loadAll(true); }, 30000);   /* pick up new orders without a refresh */
 (async () => { if (!sess()) return; try { const t = await token(); if (!t) return; const r = await fetch(SB.url + '/auth/v1/user', {headers:{apikey:SB.key, Authorization:'Bearer ' + t}}); if (!r.ok) { setSess(null); authUi(); } } catch (e) {} })();
 
 /* mobile drawer */

@@ -191,6 +191,16 @@ function orderText(o){return `*New order ${o.id}*\n`+o.items.map(i=>`• ${i.nam
  `\n*Delivery:* ${DELIV[o.delivery].label}`+(o.address?`\n*Address:* ${o.address}`:'')+`\n*Payment:* ${PAY[o.pay].label}`+
  (o.ref?`\n*M-PESA code:* ${o.ref}`:'')+(o.notes?`\n*Notes:* ${o.notes}`:'')}
 
+/* Save the order in the database so every admin sees it. Offline? It stays on the device and is retried on the next page load. */
+async function pushOrder(o){
+  const S=window.DAI_SUPABASE; let ok=false;
+  try{
+    const r=await fetch(S.url+'/rest/v1/orders?on_conflict=id',{method:'POST',keepalive:true,headers:{apikey:S.key,Authorization:'Bearer '+S.key,'Content-Type':'application/json',Prefer:'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify({id:o.id,created_at:o.date,data:o})});
+    ok=r.ok;
+  }catch(e){}
+  let u=store.get('unsynced',[]).filter(x=>x!==o.id); if(!ok)u.push(o.id); store.set('unsynced',u);
+}
+(function(){ store.get('unsynced',[]).forEach(id=>{ const o=store.get('orders',[]).find(x=>x.id===id); if(o)pushOrder(o); }); })();
 function placeOrder(e){
   e&&e.preventDefault(); $('#err').classList.add('hidden');
   const f=$('#form'), v=n=>f.elements[n].value.trim(), m=val('pay'), d=val('delivery'), L=lines();
@@ -205,6 +215,7 @@ function placeOrder(e){
     customer:{name:v('name'),phone:v('phone'),email:v('email')},delivery:d,address:d==='pickup'?'':v('address'),pay:m,
     ref:m==='pochi'?v('ref').toUpperCase():'',notes:v('notes'),user:session.id||null};
   const orders=store.get('orders',[]); orders.unshift(o); store.set('orders',orders);
+  pushOrder(o);
   cart={}; store.set('cart',cart);
   done(o);
 }

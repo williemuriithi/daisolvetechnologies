@@ -671,9 +671,24 @@ ${fld('Email <span class="font-normal text-secondary">(required for PayPal and c
       user: session ? session.id : null
     };
     orders.unshift(order); store.set('orders', orders);
+    pushOrder(order);
     cart = {}; saveCart();
     showOrderDone(order);
   });
+}
+/* Orders are saved in the database so every admin sees them. If the phone is offline, the order is kept
+   on the device and sent the next time any page opens. */
+async function pushOrder(o) {
+  try {
+    await sbFetch('/rest/v1/orders?on_conflict=id', {method: 'POST', headers: {Prefer: 'resolution=ignore-duplicates,return=minimal'}, body: JSON.stringify({id: o.id, created_at: o.date, data: o})});
+    store.set('unsynced', store.get('unsynced', []).filter(x => x !== o.id));
+  } catch (e) {
+    const u = store.get('unsynced', []); if (!u.includes(o.id)) { u.push(o.id); store.set('unsynced', u); }
+  }
+}
+function retryUnsyncedOrders() {
+  const u = store.get('unsynced', []); if (!u.length) return;
+  u.forEach(id => { const o = orders.find(x => x.id === id); if (o) pushOrder(o); else store.set('unsynced', store.get('unsynced', []).filter(x => x !== id)); });
 }
 function orderText(o) {
   return `*New order ${o.id}*\n` + o.items.map(i => `• ${i.name} x${i.qty} – ${kes(i.price * i.qty)}`).join('\n') +
@@ -1012,6 +1027,7 @@ function init() {
   if (grid) readProducts(); else loadStaticProducts();
   updateBadges();
   verifySession();
+  retryUnsyncedOrders();
 
   // sort option + tabs ids
   const sel = $('#sortSelect');
@@ -1178,6 +1194,7 @@ function init() {
     const subs = store.get('subs', []);
     const dup = subs.includes(v.toLowerCase());
     if (!dup) { subs.push(v.toLowerCase()); store.set('subs', subs); }
+    sbFetch('/rest/v1/subscribers?on_conflict=email', {method: 'POST', headers: {Prefer: 'resolution=ignore-duplicates,return=minimal'}, body: JSON.stringify({email: v.toLowerCase()})}).catch(() => {});
     nf.reset(); ns.classList.remove('hidden');
     ns.lastChild.textContent = dup ? ' This email is already subscribed.' : " Thank you! You're subscribed to Daisolve phone deal alerts.";
   });
