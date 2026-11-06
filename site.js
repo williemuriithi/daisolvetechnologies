@@ -721,44 +721,47 @@ function openTrack(prefill) {
 }
 
 /* ---------- Account (stored on this device) ---------- */
-/* ---------- Database accounts + reviews (Supabase RPC, no email verification) ---------- */
-const DB_ERR = {
-  invalid_name: 'Enter your full name.', invalid_phone: 'Enter a valid phone number.', invalid_email: 'Enter a valid email address.',
-  weak_password: 'Use at least 6 characters.', email_taken: 'This email already has an account. Sign in instead.',
-  no_account: 'No account found with these details.', bad_password: 'Incorrect password.',
-  not_signed_in: 'Please sign in again.', invalid_rating: 'Choose a star rating.', review_too_short: 'Write at least a few words.',
-  review_too_long: 'Please keep your review under 1500 characters.'
+/* ---------- Database accounts + reviews (Supabase Auth) ---------- */
+const AUTH_ERR = {
+  invalid_credentials: 'Incorrect email or password.', email_not_confirmed: 'Please confirm your email first. Open the link we sent you (check spam too), then sign in.',
+  user_already_exists: 'This email already has an account. Sign in instead.', weak_password: 'Use at least 6 characters.',
+  over_email_send_rate_limit: 'Too many attempts. Please wait a few minutes and try again.', over_request_rate_limit: 'Too many attempts. Please wait a few minutes and try again.',
+  email_address_invalid: 'Enter a valid email address.', signup_disabled: 'Sign up is currently unavailable.'
 };
-async function rpc(fn, args) {
+async function sbFetch(path, opts, token) {
   const S = window.DAI_SUPABASE;
-  if (!S) throw new Error('Could not reach the database. Please refresh and try again.');
-  let r;
-  try {
-    r = await fetch(S.url + '/rest/v1/rpc/' + fn, {method: 'POST', headers: {apikey: S.key, Authorization: 'Bearer ' + S.key, 'Content-Type': 'application/json'}, body: JSON.stringify(args || {})});
-  } catch (e) { throw new Error('No internet connection. Please try again.'); }
+  if (!S) throw Object.assign(new Error('Could not reach the database. Please refresh and try again.'), {code: 'offline'});
+  const o = Object.assign({}, opts); o.headers = Object.assign({apikey: S.key, Authorization: 'Bearer ' + (token || S.key), 'Content-Type': 'application/json'}, o.headers);
+  let r; try { r = await fetch(S.url + path, o); } catch (e) { throw Object.assign(new Error('No internet connection. Please try again.'), {code: 'offline'}); }
   let d = null; try { d = await r.json(); } catch (e) {}
   if (!r.ok) {
-    const m = (d && d.message) || '';
-    const e = new Error(DB_ERR[m] || (/function .* does not exist|PGRST202/.test(m + (d && d.code || '')) ? 'Accounts are not set up yet. Please try again later.' : 'Something went wrong. Please try again.'));
-    e.code = m; throw e;
+    const code = (d && (d.error_code || d.code)) || '', msg = (d && (d.msg || d.message || d.error_description)) || '';
+    const e = new Error(AUTH_ERR[code] || (/already registered/i.test(msg) ? AUTH_ERR.user_already_exists : /not confirmed/i.test(msg) ? AUTH_ERR.email_not_confirmed : /invalid login/i.test(msg) ? AUTH_ERR.invalid_credentials : 'Something went wrong. Please try again.'));
+    e.code = code || (/not confirmed/i.test(msg) ? 'email_not_confirmed' : /invalid login/i.test(msg) ? 'invalid_credentials' : /already registered/i.test(msg) ? 'user_already_exists' : ''); e.status = r.status; throw e;
   }
   return d;
 }
-function setSession(res) {
-  const c = res.customer;
-  session = {id: c.id, name: c.name, phone: c.phone, email: c.email, token: res.token};
+function setSession(d) {
+  const u = d.user || {}, m = u.user_metadata || {};
+  session = {id: u.id, name: m.name || (u.email || 'Customer').split('@')[0], phone: m.phone || '', email: u.email, token: d.access_token, refresh: d.refresh_token, exp: Math.floor(Date.now() / 1000) + (d.expires_in || 3600)};
   store.set('session', session); updateAccountLabel();
 }
 function clearSession() { session = null; store.set('session', null); updateAccountLabel(); }
+async function getToken() {
+  if (!session || !session.token) return null;
+  if (session.exp - 60 > Date.now() / 1000) return session.token;
+  try {
+    const d = await sbFetch('/auth/v1/token?grant_type=refresh_token', {method: 'POST', body: JSON.stringify({refresh_token: session.refresh})});
+    setSession(d); return session.token;
+  } catch (e) { if (e.code !== 'offline') clearSession(); return null; }
+}
 async function verifySession() {
   if (!session) return;
-  if (!session.token) { clearSession(); return; }   // old device-only account: sign in again
-  try {
-    const c = await rpc('customer_me', {p_token: session.token});
-    if (!c) clearSession(); else { session = Object.assign({}, c, {token: session.token}); store.set('session', session); updateAccountLabel(); }
-  } catch (e) { /* offline: keep the saved session */ }
+  const t = await getToken(); if (!t) { if (session && !session.token) clearSession(); return; }
+  try { await sbFetch('/auth/v1/user', {method: 'GET'}, t); }
+  catch (e) { if (e.status === 401 || e.status === 403) clearSession(); }
 }
-let afterAuth = null;   // runs once after a successful sign in / sign up (e.g. open the review form)
+let afterAuth = null;   // runs once after a successful sign in (e.g. open the review form)
 function updateAccountLabel() {
   const l = $('a[href="#account"] span.text-label-md'); if (l) l.textContent = session ? session.name.split(' ')[0] : 'Account';
 }
@@ -776,7 +779,7 @@ function openAccount(tab) {
 <p class="text-body-sm text-secondary mt-1">Save your details for faster checkout and see your orders in one place.</p>
 <form class="mt-4 space-y-3" id="authForm" novalidate="">
 ${tab === 'up' ? fld('Full name', 'name', 'text', 'autocomplete="name"') + fld('Phone number', 'phone', 'tel', 'autocomplete="tel"') : ''}
-${fld(tab === 'up' ? 'Email' : 'Email or phone number', 'id', tab === 'up' ? 'email' : 'text', 'autocomplete="username"')}
+${fld('Email', 'id', 'email', 'autocomplete="username"')}
 ${fld('Password', 'pw', 'password', `autocomplete="${tab === 'in' ? 'current-password' : 'new-password'}" minlength="6"`)}
 <button class="w-full h-11 bg-primary-container text-white rounded-lg text-label-md font-bold hover:bg-primary active:scale-95 transition" type="submit">${tab === 'in' ? 'Sign in' : 'Create account'}</button>
 </form>
@@ -788,7 +791,8 @@ ${afterAuth ? '<p class="mt-3 text-body-sm text-primary text-center font-bold">S
     e.preventDefault();
     const v = n => form.elements[n] ? form.elements[n].value.trim() : '';
     const btn = $('button[type="submit"]', form), label = btn.textContent;
-    let res;
+    const fail = (name, err) => { setErr(form, name, err.message); firstError(form); btn.disabled = false; btn.textContent = label; };
+    let d;
     if (tab === 'up') {
       setErr(form, 'name', v('name').length < 2 ? 'Enter your full name.' : '');
       setErr(form, 'phone', !okPhone(v('phone')) ? 'Enter a valid phone number.' : '');
@@ -796,17 +800,23 @@ ${afterAuth ? '<p class="mt-3 text-body-sm text-primary text-center font-bold">S
       setErr(form, 'pw', v('pw').length < 6 ? 'Use at least 6 characters.' : '');
       if ($('[data-err]:not(.hidden)', form)) { firstError(form); return; }
       btn.disabled = true; btn.textContent = 'Creating account...';
-      try { res = await rpc('customer_signup', {p_name: v('name'), p_phone: v('phone'), p_email: v('id'), p_password: v('pw')}); }
-      catch (err) { setErr(form, err.code === 'email_taken' ? 'id' : err.code === 'invalid_phone' ? 'phone' : err.code === 'invalid_name' ? 'name' : err.code === 'weak_password' ? 'pw' : 'id', err.message); firstError(form); btn.disabled = false; btn.textContent = label; return; }
+      try { d = await sbFetch('/auth/v1/signup', {method: 'POST', body: JSON.stringify({email: v('id').toLowerCase(), password: v('pw'), data: {name: v('name'), phone: v('phone')}})}); }
+      catch (err) { fail(err.code === 'weak_password' ? 'pw' : 'id', err); return; }
+      const u = d.user || d;
+      if (u && Array.isArray(u.identities) && !u.identities.length) { fail('id', new Error(AUTH_ERR.user_already_exists)); return; }
+      if (!d.access_token) {   // email confirmation is switched on: the account exists, they just need to click the link
+        box.innerHTML = `<div class="p-6 text-center"><span class="material-symbols-outlined text-5xl text-mpesa-green">mark_email_read</span><h3 class="mt-2 text-headline-md font-headline-md text-price-primary">Check your email</h3><p class="mt-2 text-body-md text-secondary">Your account is created. We sent a confirmation link to <b>${esc(v('id'))}</b>. Open it, then come back and sign in.</p><button class="mt-5 h-11 px-6 bg-primary-container text-white rounded-lg text-label-md font-bold hover:bg-primary" data-auth-tab="in" type="button">Go to sign in</button></div>`;
+        return;
+      }
     } else {
-      setErr(form, 'id', !v('id') ? 'Enter your email or phone number.' : '');
+      setErr(form, 'id', !okEmail(v('id')) ? 'Enter your email address.' : '');
       setErr(form, 'pw', !v('pw') ? 'Enter your password.' : '');
       if ($('[data-err]:not(.hidden)', form)) { firstError(form); return; }
       btn.disabled = true; btn.textContent = 'Signing in...';
-      try { res = await rpc('customer_login', {p_login: v('id'), p_password: v('pw')}); }
-      catch (err) { setErr(form, err.code === 'bad_password' ? 'pw' : 'id', err.message); firstError(form); btn.disabled = false; btn.textContent = label; return; }
+      try { d = await sbFetch('/auth/v1/token?grant_type=password', {method: 'POST', body: JSON.stringify({email: v('id').toLowerCase(), password: v('pw')})}); }
+      catch (err) { fail(err.code === 'email_not_confirmed' ? 'id' : 'pw', err); return; }
     }
-    setSession(res);
+    setSession(d);
     toast(`Welcome, ${session.name.split(' ')[0]}`);
     const next = afterAuth; afterAuth = null;
     if (next) { closeModal(); next(); } else accountView();
@@ -818,7 +828,7 @@ const niceDate = d => { try { return new Date(d).toLocaleDateString('en-KE', {da
 async function loadDbReviews(pid) {
   const box = $('#dbReviews'); if (!box) return;
   try {
-    const rows = await rpc('list_reviews', {p_product_id: pid});
+    const rows = await sbFetch('/rest/v1/reviews?select=author_name,rating,body,created_at&order=created_at.desc&limit=100&product_id=eq.' + encodeURIComponent(pid), {method: 'GET'});
     if (!rows || !rows.length) { box.innerHTML = ''; return; }
     const avg = rows.reduce((t, r) => t + r.rating, 0) / rows.length;
     box.innerHTML = `<div class="mt-4 pt-4 border-t border-surface-border"><h3 class="text-label-md font-bold text-price-primary">Reviews from our customers <span class="text-secondary font-normal">(${rows.length} · ${avg.toFixed(1)} average)</span></h3>
@@ -848,7 +858,8 @@ function openReviewForm(p) {
     if ($('[data-err]:not(.hidden)', form)) return;
     const btn = $('button[type="submit"]', form); btn.disabled = true; btn.textContent = 'Posting...';
     try {
-      await rpc('submit_review', {p_token: session.token, p_product_id: p.id, p_rating: rating, p_body: body});
+      const tk = await getToken(); if (!tk) throw Object.assign(new Error('Please sign in again.'), {code: 'not_signed_in'});
+      await sbFetch('/rest/v1/reviews?on_conflict=product_id,user_id', {method: 'POST', headers: {Prefer: 'resolution=merge-duplicates,return=minimal'}, body: JSON.stringify({product_id: p.id, rating, body})}, tk);
     } catch (err) {
       btn.disabled = false; btn.textContent = 'Post review';
       if (err.code === 'not_signed_in') { clearSession(); closeModal(); afterAuth = () => openReviewForm(p); openAccount('in'); toast('Please sign in again'); return; }
@@ -868,7 +879,7 @@ function accountView() {
 <button class="mt-2 w-full h-10 text-danger text-label-md font-bold hover:bg-error-container rounded-lg" data-signout type="button">Sign out</button></div>`);
   box.addEventListener('click', e => {
     const t = e.target.closest('[data-track]'); if (t) openTrack(t.dataset.track);
-    if (e.target.closest('[data-signout]')) { const tk = session && session.token; if (tk) rpc('customer_logout', {p_token: tk}).catch(() => {}); clearSession(); closeModal(); toast('You have signed out'); if ($('#accountPage')) openAccount(); }
+    if (e.target.closest('[data-signout]')) { const tk = session && session.token; if (tk) sbFetch('/auth/v1/logout', {method: 'POST'}, tk).catch(() => {}); clearSession(); closeModal(); toast('You have signed out'); if ($('#accountPage')) openAccount(); }
   });
 }
 
