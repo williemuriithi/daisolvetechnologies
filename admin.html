@@ -216,7 +216,7 @@ tailwind.config = { theme: { extend: {
   <div class="bg-white rounded-xl border border-surface-border shadow-sm p-5 space-y-4" id="prodCard">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
       <div><h2 class="text-xl font-bold text-price-primary">Manage Products</h2>
-      <p class="text-xs text-secondary">Add or delete products in the live database. Sign in with your admin account.</p></div>
+      <p class="text-xs text-secondary">Add, edit or delete products in the live database. Sign in with your admin account.</p></div>
       <div id="authBar" class="text-xs text-secondary"></div>
     </div>
     <div id="prodAdmin" class="hidden space-y-4">
@@ -237,7 +237,7 @@ tailwind.config = { theme: { extend: {
         <input id="pImg" placeholder="...or paste an image URL" class="hidden"/>
         <button id="pAdd" class="bg-primary text-white px-4 py-2 rounded-lg font-semibold">Add product</button>
       </div>
-      <input id="pSearch" type="search" placeholder="Search products to delete..." class="w-full px-3 py-2 rounded-lg border border-surface-border text-sm"/>
+      <input id="pSearch" type="search" placeholder="Search products to edit or delete..." class="w-full px-3 py-2 rounded-lg border border-surface-border text-sm"/>
       <div class="flex items-center justify-between gap-2 text-xs"><label class="flex items-center gap-2 font-semibold text-price-primary cursor-pointer"><input id="pAll" type="checkbox"/> <span id="pAllTxt">Select all</span></label><button id="pBulk" disabled class="px-3 py-1.5 rounded-lg bg-danger text-white font-bold disabled:opacity-40 disabled:cursor-not-allowed">Delete selected (0)</button></div>
       <div id="pList" class="divide-y divide-surface-border max-h-96 overflow-y-auto border border-surface-border rounded-lg"></div>
     </div>
@@ -546,7 +546,7 @@ function renderInventory() {
       <td class="py-3 px-3 font-bold text-price-primary whitespace-nowrap">${kes(p.price)}</td>
       <td class="py-3 px-3"><span class="font-bold ${st[2]}">${s} unit${s === 1 ? '' : 's'}</span></td>
       <td class="py-3 px-3"><span class="inline-flex px-2 py-0.5 rounded lbl ${st[1]}">${st[0]}</span></td>
-      <td class="py-3 px-3 text-right whitespace-nowrap"><button data-adjust="${esc(p.id)}" class="text-primary hover:underline lbl">Adjust</button> <span class="text-outline-variant">|</span> <a href="/shop/${encodeURIComponent(p.id)}" target="_blank" class="text-secondary hover:underline lbl">View</a></td>
+      <td class="py-3 px-3 text-right whitespace-nowrap"><button data-adjust="${esc(p.id)}" class="text-primary hover:underline lbl">Adjust</button> <span class="text-outline-variant">|</span> <button data-editprod="${esc(p.id)}" class="text-primary hover:underline lbl">Edit</button> <span class="text-outline-variant">|</span> <button data-delprod="${esc(p.id)}" class="text-danger hover:underline lbl">Delete</button> <span class="text-outline-variant">|</span> <a href="/shop/${encodeURIComponent(p.id)}" target="_blank" class="text-secondary hover:underline lbl">View</a></td>
     </tr>`;
   }).join('') || `<tr><td colspan="6" class="py-8 text-center text-xs text-secondary">No phones match.</td></tr>`;
 }
@@ -670,7 +670,7 @@ function renderProducts() {
   const q = $('#pSearch').value.trim().toLowerCase();
   const all = catalog.filter(p => !q || (p.name + ' ' + p.brand).toLowerCase().includes(q)); const rows = all.slice(0, 60); allP = all.map(p => p.id);
   $('#brandList').innerHTML = [...new Set(catalog.map(p => p.brand))].map(b => `<option value="${esc(b)}">`).join('');
-  $('#pList').innerHTML = rows.map(p => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selprod="${esc(p.id)}" ${selP.has(p.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-10 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-contain"/>` : '<span class="material-symbols-outlined text-secondary text-lg">image</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(p.name)}</p><p class="text-xs text-secondary">${esc(p.brand)} - ${kes(p.price)}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-imgprod="${esc(p.id)}" class="text-primary hover:underline text-xs font-bold">${p.img ? 'Change image' : 'Add image'}</button><button data-delprod="${esc(p.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No products.</p>';
+  $('#pList').innerHTML = rows.map(p => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selprod="${esc(p.id)}" ${selP.has(p.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-10 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-contain"/>` : '<span class="material-symbols-outlined text-secondary text-lg">image</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(p.name)}</p><p class="text-xs text-secondary">${esc(p.brand)} - ${kes(p.price)}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-imgprod="${esc(p.id)}" class="text-primary hover:underline text-xs font-bold">${p.img ? 'Change image' : 'Add image'}</button><button data-editprod="${esc(p.id)}" class="text-primary hover:underline text-xs font-bold">Edit</button><button data-delprod="${esc(p.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No products.</p>';
   updBulkP();
 }
 async function login() {
@@ -733,6 +733,62 @@ function changeImage(id) {
   inp.onchange = async () => { if (!inp.files[0]) return; try { toast('Uploading...'); const url = await uploadImage(inp.files[0], id); await api('products?id=eq.' + encodeURIComponent(id), {method:'PATCH', headers:{Prefer:'return=minimal'}, body: JSON.stringify({img: url})}); await reloadCatalog(); toast('Image saved'); } catch (e) { toast(e.message); } };
   inp.click();
 }
+function editProduct(id) {
+  const p = catalog.find(x => x.id === id); if (!p) return;
+  let file = null, removeImg = false;
+  const L = 'block text-xs font-semibold text-secondary mb-1', I = 'w-full px-3 py-2 rounded-lg border border-surface-border text-sm';
+  const val = x => x == null ? '' : esc(String(x));
+  openModal(`<div class="flex items-start justify-between gap-3"><div><h3 class="font-bold text-price-primary">Edit product</h3><p class="text-xs text-secondary mt-0.5">ID: ${esc(p.id)}</p></div><button data-closemodal class="p-1 rounded-full hover:bg-surface-subtle"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      <div class="col-span-2"><label class="${L}">Product name *</label><input id="eName" class="${I}" value="${val(p.name)}"/></div>
+      <div><label class="${L}">Brand *</label><input id="eBrand" list="brandList" class="${I}" value="${val(p.brand)}"/></div>
+      <div><label class="${L}">Price (KSh) *</label><input id="ePrice" type="number" min="0" class="${I}" value="${val(p.price)}"/></div>
+      <div><label class="${L}">Old price (optional)</label><input id="eOld" type="number" min="0" class="${I}" value="${val(p.old)}"/></div>
+      <div><label class="${L}">Stock</label><input id="eStock" type="number" min="0" class="${I}" value="${val(stockOf(p))}"/></div>
+      <div><label class="${L}">RAM (GB)</label><input id="eRam" type="number" min="0" class="${I}" value="${val(p.ram)}"/></div>
+      <div><label class="${L}">Storage (GB)</label><input id="eStorage" type="number" min="0" class="${I}" value="${val(p.storage)}"/></div>
+      <div class="col-span-2"><label class="${L}">Network</label><select id="eNet" class="${I}"><option value="">None</option><option value="5g" ${p.net === '5g' ? 'selected' : ''}>5G</option><option value="4g" ${p.net === '4g' ? 'selected' : ''}>4G</option></select></div>
+      <div class="col-span-2"><label class="${L}">Image</label>
+        <div class="flex items-center gap-3">
+          <div class="w-16 h-16 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0"><img id="ePrev" class="${p.img ? '' : 'hidden '}w-full h-full object-contain" alt="" ${p.img ? 'src="' + esc(p.img) + '"' : ''}/><span id="eIcon" class="material-symbols-outlined text-secondary ${p.img ? 'hidden' : ''}">image</span></div>
+          <div class="flex flex-col gap-1 text-xs font-bold"><button type="button" id="eChoose" class="text-primary hover:underline text-left">Choose new image</button><button type="button" id="eRemove" class="text-danger hover:underline text-left">Remove image</button></div>
+          <input id="eFile" type="file" accept="image/*" class="hidden"/>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5 flex items-center gap-2"><button id="eSave" class="flex-1 bg-primary text-white py-2.5 rounded-lg text-sm font-semibold">Save changes</button><button id="eDel" class="px-4 py-2.5 rounded-lg bg-danger text-white text-sm font-semibold">Delete</button></div>`);
+  const fi = $('#eFile'), pv = $('#ePrev');
+  $('#eChoose').onclick = () => fi.click();
+  fi.onchange = () => { file = fi.files[0] || null; if (file) { removeImg = false; pv.src = URL.createObjectURL(file); pv.classList.remove('hidden'); $('#eIcon').classList.add('hidden'); } };
+  $('#eRemove').onclick = () => { file = null; removeImg = true; fi.value = ''; pv.classList.add('hidden'); $('#eIcon').classList.remove('hidden'); };
+  $('#eDel').onclick = () => { closeModal(); delProduct(id); };
+  $('#eSave').onclick = async () => {
+    const name = $('#eName').value.trim(), brand = $('#eBrand').value.trim(), price = +$('#ePrice').value;
+    if (!name || !brand || !(price > 0)) { toast('Name, brand and price are required'); return; }
+    const old = +$('#eOld').value || null, ram = +$('#eRam').value || null, storage = +$('#eStorage').value || null, net = $('#eNet').value || null;
+    const stock = Math.max(0, Math.floor(+$('#eStock').value) || 0);
+    const patch = {name, brand, price, old, ram, storage, net, stock};
+    if (name !== p.name && (p.short || '') === String(p.name).slice(0, 14)) patch.short = name.slice(0, 14);
+    if (ram !== (p.ram || null) || storage !== (p.storage || null) || net !== (p.net || null)) {
+      const keep = (p.chips || []).filter(c => !/^\d+GB( \/ \d+GB)?$/.test(c) && !/^[45]G$/i.test(c));
+      patch.chips = [ram && storage ? ram + 'GB / ' + storage + 'GB' : storage ? storage + 'GB' : '', net ? net.toUpperCase() : ''].filter(Boolean).concat(keep);
+      patch.spec = ram && storage ? ram + 'GB RAM · ' + storage + 'GB Storage' : storage ? storage + 'GB Storage' : '';
+    }
+    if (price !== Number(p.price) || net !== (p.net || null)) {
+      const toks = (p.cat || '').split(/\s+/).filter(t => t && !['flagship', 'midrange', 'under20k', '5g'].includes(t));
+      patch.cat = [price >= 80000 ? 'flagship' : price >= 20000 ? 'midrange' : 'under20k'].concat(toks, net === '5g' ? ['5g'] : []).join(' ');
+    }
+    const btn = $('#eSave'); btn.disabled = true; btn.textContent = 'Saving...';
+    try {
+      if (file) { toast('Uploading image...'); patch.img = await uploadImage(file, id); }
+      else if (removeImg) patch.img = null;
+      await api('products?id=eq.' + encodeURIComponent(id), {method:'PATCH', headers:{Prefer:'return=minimal'}, body: JSON.stringify(patch)});
+      const m = stockMap(); delete m[id]; store.set('admin_stock', m);
+      await reloadCatalog(); closeModal(); toast('Product updated');
+    } catch (e) { toast('Save failed: ' + e.message); btn.disabled = false; btn.textContent = 'Save changes'; }
+  };
+}
+
 $('#lgBtn').onclick = login;
 $('#lgPass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 $('#pAdd').onclick = addProduct;
@@ -741,6 +797,7 @@ document.addEventListener('click', e => {
   if (e.target.id === 'lgOut') { setSess(null); authUi(); }
   const d = e.target.closest('[data-delprod]'); if (d) delProduct(d.dataset.delprod);
   const im = e.target.closest('[data-imgprod]'); if (im) changeImage(im.dataset.imgprod);
+  const ed = e.target.closest('[data-editprod]'); if (ed) editProduct(ed.dataset.editprod);
 });
 
 /* ---------- Blog articles ---------- */
