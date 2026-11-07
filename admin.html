@@ -216,7 +216,7 @@ tailwind.config = { theme: { extend: {
   <div class="bg-white rounded-xl border border-surface-border shadow-sm p-5 space-y-4" id="prodCard">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
       <div><h2 class="text-xl font-bold text-price-primary">Manage Products</h2>
-      <p class="text-xs text-secondary">Add, edit or delete products in the live database. Sign in with your admin account.</p></div>
+      <p class="text-xs text-secondary">Add or delete products in the live database. To edit a product, use the Inventory &amp; Stock Watchlist below. Sign in with your admin account.</p></div>
       <div id="authBar" class="text-xs text-secondary"></div>
     </div>
     <div id="prodAdmin" class="hidden space-y-4">
@@ -237,7 +237,7 @@ tailwind.config = { theme: { extend: {
         <input id="pImg" placeholder="...or paste an image URL" class="hidden"/>
         <button id="pAdd" class="bg-primary text-white px-4 py-2 rounded-lg font-semibold">Add product</button>
       </div>
-      <input id="pSearch" type="search" placeholder="Search products to edit or delete..." class="w-full px-3 py-2 rounded-lg border border-surface-border text-sm"/>
+      <input id="pSearch" type="search" placeholder="Search products to delete..." class="w-full px-3 py-2 rounded-lg border border-surface-border text-sm"/>
       <div class="flex items-center justify-between gap-2 text-xs"><label class="flex items-center gap-2 font-semibold text-price-primary cursor-pointer"><input id="pAll" type="checkbox"/> <span id="pAllTxt">Select all</span></label><button id="pBulk" disabled class="px-3 py-1.5 rounded-lg bg-danger text-white font-bold disabled:opacity-40 disabled:cursor-not-allowed">Delete selected (0)</button></div>
       <div id="pList" class="divide-y divide-surface-border max-h-96 overflow-y-auto border border-surface-border rounded-lg"></div>
     </div>
@@ -670,7 +670,7 @@ function renderProducts() {
   const q = $('#pSearch').value.trim().toLowerCase();
   const all = catalog.filter(p => !q || (p.name + ' ' + p.brand).toLowerCase().includes(q)); const rows = all.slice(0, 60); allP = all.map(p => p.id);
   $('#brandList').innerHTML = [...new Set(catalog.map(p => p.brand))].map(b => `<option value="${esc(b)}">`).join('');
-  $('#pList').innerHTML = rows.map(p => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selprod="${esc(p.id)}" ${selP.has(p.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-10 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-contain"/>` : '<span class="material-symbols-outlined text-secondary text-lg">image</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(p.name)}</p><p class="text-xs text-secondary">${esc(p.brand)} - ${kes(p.price)}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-imgprod="${esc(p.id)}" class="text-primary hover:underline text-xs font-bold">${p.img ? 'Change image' : 'Add image'}</button><button data-editprod="${esc(p.id)}" class="text-primary hover:underline text-xs font-bold">Edit</button><button data-delprod="${esc(p.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No products.</p>';
+  $('#pList').innerHTML = rows.map(p => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selprod="${esc(p.id)}" ${selP.has(p.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-10 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-contain"/>` : '<span class="material-symbols-outlined text-secondary text-lg">image</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(p.name)}</p><p class="text-xs text-secondary">${esc(p.brand)} - ${kes(p.price)}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-delprod="${esc(p.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No products.</p>';
   updBulkP();
 }
 async function login() {
