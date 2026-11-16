@@ -318,7 +318,7 @@ function init() {
       if (a === 'clear') cart = {};
       saveCart(); return;
     }
-    if ((el = t.closest('[data-brand]'))) { const b = el.dataset.brand; S.brands = S.brands.includes(b) && S.brands.length === 1 ? [] : [b]; S.page = 1; render(); return; }
+    if ((el = t.closest('[data-brand]:not(body)'))) { const b = el.dataset.brand; S.brands = S.brands.includes(b) && S.brands.length === 1 ? [] : [b]; S.page = 1; render(); return; }
     if ((el = t.closest('[data-brand-link]'))) { e.preventDefault(); fresh(); S.brands = el.dataset.brandLink.split(','); render(); scrollCatalog(); return; }
     if ((el = t.closest('[data-info]'))) { e.preventDefault(); const [title, body] = INFO[el.dataset.info]; openModal(`<div class="p-5 sm:p-6"><h3 class="text-headline-md font-headline-md text-price-primary pr-8">${title}</h3><div class="mt-3 text-body-md text-secondary leading-relaxed">${body}</div></div>`); return; }
     if ((el = t.closest('[data-preset]'))) { applyPreset(el.dataset.preset); return; }
