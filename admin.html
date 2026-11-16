@@ -669,7 +669,7 @@ function authUi() {
 function renderProducts() {
   const q = $('#pSearch').value.trim().toLowerCase();
   const all = catalog.filter(p => !q || (p.name + ' ' + p.brand).toLowerCase().includes(q)); const rows = all.slice(0, 60); allP = all.map(p => p.id);
-  $('#brandList').innerHTML = [...new Set(catalog.map(p => p.brand))].map(b => `<option value="${esc(b)}">`).join('');
+  $('#brandList').innerHTML = [...new Set(['Ex UK'].concat(catalog.map(p => p.brand)))].map(b => `<option value="${esc(b)}">`).join('');
   $('#pList').innerHTML = rows.map(p => `<div class="flex items-center justify-between gap-2 p-2.5 text-sm"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" data-selprod="${esc(p.id)}" ${selP.has(p.id) ? 'checked' : ''} class="flex-shrink-0"/><div class="w-10 h-10 rounded bg-surface-subtle flex items-center justify-center overflow-hidden flex-shrink-0">${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-contain"/>` : '<span class="material-symbols-outlined text-secondary text-lg">image</span>'}</div><div class="min-w-0"><p class="font-semibold text-price-primary truncate">${esc(p.name)}</p><p class="text-xs text-secondary">${esc(p.brand)} - ${kes(p.price)}</p></div></div><div class="flex items-center gap-3 flex-shrink-0"><button data-delprod="${esc(p.id)}" class="text-danger hover:underline text-xs font-bold">Delete</button></div></div>`).join('') || '<p class="p-4 text-xs text-secondary text-center">No products.</p>';
   updBulkP();
 }

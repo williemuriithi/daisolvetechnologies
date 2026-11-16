@@ -48,7 +48,7 @@ $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" .
 $out .= dai_url("$origin/home", 'daily', '1.0', $today);
 $out .= dai_url("$origin/shop", 'daily', '0.9', $today);
 $out .= dai_url("$origin/brands", 'weekly', '0.8', $today);
-foreach (['samsung','apple','nokia','redmi','realmi','oppo','tecno','infinix','itel','villaon','vivo','honor','zte','modio','elimutab'] as $b) {
+foreach (['samsung','apple','nokia','redmi','realmi','oppo','tecno','infinix','itel','villaon','vivo','honor','zte','modio','elimutab','ex-uk'] as $b) {
     $out .= dai_url("$origin/brands/$b", 'daily', '0.8', $today);
 }
 $out .= dai_url("$origin/blog", 'weekly', '0.7', $today);

@@ -1,6 +1,6 @@
 // Local test server with the same clean URLs.  Run:  node serve.js   then open http://127.0.0.1:3000/home
 const http = require('http'), fs = require('fs'), path = require('path');
-const BR = 'samsung|apple|nokia|redmi|realmi|oppo|tecno|infinix|itel|villaon|vivo|honor|zte|modio|elimutab';
+const BR = 'samsung|apple|nokia|redmi|realmi|oppo|tecno|infinix|itel|villaon|vivo|honor|zte|modio|elimutab|ex-uk';
 const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.webp':'image/webp','.ico':'image/x-icon'};
 function route(p) {
   p = p.replace(/\/+$/, '') || '/';
