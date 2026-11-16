@@ -1116,13 +1116,34 @@ document.addEventListener('dai-consent',function(e){var g=e.detail==='all'?'gran
 </a>
 </nav>
 
-<script src="/catalog.js"></script><script src="/supabase-catalog.js"></script><script src="/cookies.js"></script><script>
+<script src="/catalog.js"></script><script src="/supabase-catalog.js"></script><script>
+/* Pin featured phones first (hero slider + Explore Our Phones). Order = priority. */
+(function () {
+  var cat = window.DAI_CATALOG || []; if (!cat.length) return;
+  var PINS = ['iphone18promax', 'iphone17promax', 's26ultra', 'vivox300'];
+  var norm = function (t) { return String(t || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };
+  var used = {}, groups = [], heroPick = [];
+  PINS.forEach(function (key) {
+    var m = cat.filter(function (p) { return !used[p.id] && norm(p.name).indexOf(key) !== -1; });
+    /* for "vivox300" avoid Pro/Ultra/FE variants taking the base slot */
+    m.sort(function (a, b) { return (b.img ? 1 : 0) - (a.img ? 1 : 0) || norm(a.name).length - norm(b.name).length; });
+    m.forEach(function (p) { used[p.id] = 1; });
+    if (m.length) { heroPick.push(m[0]); groups.push(m); }
+  });
+  var pinned = [].concat.apply([], groups);
+  var rest = cat.filter(function (p) { return !used[p.id]; });
+  window.DAI_CATALOG = pinned.concat(rest);
+  window.DAI_HERO_PICK = heroPick;
+})();
+</script><script src="/cookies.js"></script><script>
 /* Hero slides come from the database: top products, newest list order */
 (function () {
   var slider = document.getElementById('heroSlider'); if (!slider) return;
   var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
   var kes = function (n) { return 'KSh ' + Number(n || 0).toLocaleString('en-KE'); };
-  var list = (window.DAI_CATALOG || []).filter(function (p) { return p.img; }).concat((window.DAI_CATALOG || []).filter(function (p) { return !p.img; })).slice(0, 4);
+  var base = (window.DAI_CATALOG || []).filter(function (p) { return p.img; }).concat((window.DAI_CATALOG || []).filter(function (p) { return !p.img; }));
+  var pick = window.DAI_HERO_PICK || [];
+  var list = pick.concat(base.filter(function (p) { return pick.indexOf(p) === -1; })).slice(0, 4);
   var promo = slider.firstElementChild;
   list.forEach(function (p) {
     var d = document.createElement('div');
