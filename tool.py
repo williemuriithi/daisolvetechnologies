@@ -1,32 +1,38 @@
-import os
+import re
 
-# Define the exact strings to find and replace
-OLD_LINE = '<a class="nav-item flex flex-col items-center justify-center transition-transform active:scale-95 text-secondary hover:text-primary" data-tab="brands" href="brands.html"><span class="material-symbols-outlined text-2xl">devices</span><span class="text-label-sm font-label-sm">Brands</span></a>'
-NEW_LINE = '<a class="nav-item flex flex-col items-center justify-center transition-transform active:scale-95 text-secondary hover:text-primary" data-tab="brands" href="blog.html"> <span class="material-symbols-outlined text-2xl">article</span> <span class="text-label-sm font-label-sm">Blogs</span>'
+# Your raw stock list text
+stock_text = """04/11/2026 HAYUMAS TECHNOLOGIES JAMIA MALL 2nd FLOOR SHOP A8 Levoh-0790835039 SAMSUNG PRICE DUBAI STOCK✅ F06 4/128@18600 F07 4/64@14500 F17 4/128@22500 F17 6/128@23500 F23 6/128@28900 M04 64@13000 M07 4/64@15200 M17 4/128@22300 M17 6/128@26000 M17E 4/128@20500 M17E 6/128@23000 A16 4/128@19000❌ A17 6/1284g@25000 A17 256/8 4g@28700 A17 256/8 5g@32700 A26 6/128@30000 A26 8/256@34600 A27 6/128@30500 A27 256/8@35700 A36 8/128@31700 A36 8/256@36000 A37 6/128@35000 A37 8/128@37900 A37 256/8@42000 A37 256/12@44000 Tab A8 32@16000 A9plus 8/128@35300 A11 8/128@25700 A11+ 6/128@29500 M36 6/128@29200 A56 8/128@40200 A56 8/256@44000 A56 256/12@46300 A57 8/128@45000 A57 256/8@51000 A57 256/12@54000 S25Fe 256@68000 S26 256/12@95000 S26 12/512@107000 S26+ 12/256@108000 S26+ 12/512@125000 S26fe 8/256@75000 S25 12/128@75000❌ S25 256/12@80000 S25 ultra 12/256@103000 S25 ultra 12/512@118,000 S26 12/512@106500❌ S26+ 12/256@106000 S26 ultra 256@117500 Fold7 256/12@160,000 Fold7 12/512@187000 Fold8 plain 256/12@172000 Fold8 plain 12/512@182000 Fold8 ultra 256/12@188000 Fold8 ultra 12/512@206000 Flip7 512@118500 Flip8 256/12@105000 Flip8 12/512@123000 Sam adapter25w@1200❌ SAMSUNG EAST AFRICA A06 64/4@13800 A06 4/128@15600 A07 4/64@15000 A07 4/128@16900 A07s 64/4@15200 A07s 128/4@18600 A08 4/64@16700 A16 4/128@20300 A17 4/128@20800 A18 4/128@24500 A11 64/4@16300 A11+ 256@45300 A37 6/128@35500 S26 ultra 12/256@119500❌ S26 ultra 12/512@139500❌ Fold 8 12/256@176500 Fold 8 12/512@186000 Fold 8 ultra 12/256@184000 Fold 8 ultra 12/512@208,000 IPHONE STOCK WARRANTY✅ 13 128@68000 14 256@85000❌ 15 128@80500❌ 16 128@89000❌ 16pro max 256@147000 17pro 256E-sim@158,000 17pro max 256@172000 17pro max 256 E-sim@158000❌ 17pro max 512@195000 17pro max 512 E-sim@188000 18pro 256 burgundy@185000 18pro 256 black@180000 18pro max 256 black@196000 18pro max 256 burgundy@208000 18pro max 256 glacier@198000 18pro max 512black@228000 18pro max 512 burgundy@233000 18pro max 512 glacier@229000 Airpods 3@17600 Airpods 4@15000❌ Airpods4 ANC@23000 Airpodspro 3 New@26500 S11 42mm@43500 S11 46mm@46500 Adapter 20w original@3000 Nokia available N105 HMD classic@1250 Nokia Flip2720@2400 REDMI STOCk A7 64/3@13800 A7pro 64/4@14800 A7pro 128/4@16500 15c 256/4@18300 15c 256/8@19900 Redmi 17 4/128@18800 Redmi 17 256/4@22500 Redmi 17 256/6@25800 N13 8/128@23000 Note14 pro+ 256/8@40500 Note14 pro+ 512/12@54500 Note15pro+ 512@58700 Note17 6/128@27100 Note17 256/6@29800 Note17 256/8@31600 Note17pro 256/8 5G@41900 Note17pro 512/8 5G@50,000 Note17pro max 256/8 5G@53600 Note17pro max 512/8 5G@62500 REALMI STOCK Note60x 64/4@12300❌ OPPO STOCK AVAILABLE A6x 64@18300 A6x 4/128@20800 A6x 256/4@22700 A6pro 256 4g 256/8@40700 A6pro 256 5g@43900 Reno15F 512/12 5G@51800 Reno15pro 512/12 5G@73000❌ Tecno price T101@1050 T353@1350 T455@2000 T528@1700 Pop20 64/3@13800❌ Pop20 128/4@15000 Spark50 4/128@18300❌ Spark50 256/8@21800❌ Camon50 256/8@31700❌ Camon50pro 256/8@38800❌ INFINIX STOCK Smart20 64/4@13700 Smart20 128@16500 Hot70 128/4@19100 H0t70 6/128@19000❌ Hot70 256/8@24000 Note 60pro 256/8@43300❌ ITEL STOCK 2163@800 2160@970 5033@1270 5627@1950 8010@1100 A05s itel@9000 City200s 128/4@14700 S26 ultra 256/8@22900❌ VILLAON STOCK V110@750 V105@700 V20SE 32/2@4100❌ V25 32/2@5800 V50s 64/4@10400 V45 32@6700 Hyper 128/6@13100 Villaon Tab@5100❌ VIVO STOCK Y05E 64@18000 Y31D 4/128@25000 Y31D 128/6@26800 Y31D 256/6@31200 V70FE 256/8@50400 V70FE 512@59000 V70 512@83800 HONOR STOCKs 2YRS WARRANTY 💎Honor Play10 3+64 @ 10600❌ 💎Honor X5C 4+64 @ 12900 💎Honor X5C+ 4+128 @ 14000❌ 💎Honor X6c 6+128 @ 18200 💎Honor X6c 6+256 @ 19400 💎Honor X7D 8+256 @22,400❌ 💎X9d 256gb 12 ram 48900 ZTE BLADE A36 64/2@12200 A57 64/4@14800 V80 max 4/128@15800 Modio tabs M128 256/6@6500 Elimu tab Et04pro@7900❌ THANK YOU 🙏"""
 
-def update_html_files(directory="."):
-    """
-    Scans the directory for HTML files and replaces OLD_LINE with NEW_LINE.
-    """
-    for root, _, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".html"):
-                file_path = os.path.join(root, file)
-                
-                # Read the content of the file
-                with open(file_path, "r", encoding="utf-8") as f:
-                    content = f.read()
-                
-                # Check if the target line exists in the file
-                if OLD_LINE in content:
-                    updated_content = content.replace(OLD_LINE, NEW_LINE)
-                    
-                    # Write the updated content back to the file
-                    with open(file_path, "w", encoding="utf-8") as f:
-                        f.write(updated_content)
-                    print(f"Updated: {file_path}")
+def adjust_price(match):
+    raw_num = match.group(1).replace(",", "")
+    price = int(raw_num)
+    
+    # Calculate premium adjustments
+    if price < 20000:
+        price += 1500
+    elif 20000 <= price < 30000:
+        price += 2000
+    elif 30000 <= price < 50000:
+        price += 3000
+    elif 50000 <= price <= 100000:
+        price += 7000
+    elif price > 100000:
+        price += 10000
+        
+    return f"@{price}"
 
-if __name__ == "__main__":
-    # Run the script in the current directory
-    # Change "." to a specific folder path if your files are stored elsewhere
-    update_html_files(".")
+# Updated regex pattern to allow zero or more whitespaces (\s*) after the '@' sign
+pattern = r"@\s*([0-9,]+)"
+
+# Step 1: Substitute standard matches
+updated_text = re.sub(pattern, adjust_price, stock_text)
+
+# Step 2: Handle the edge-case line "💎X9d 256gb 12 ram 48900" missing an '@' sign
+edge_case_pattern = r"(X9d 256gb 12 ram\s+)(48900)"
+updated_text = re.sub(edge_case_pattern, r"\1@51900", updated_text)
+
+# Save the organized and adjusted result to phones.txt
+with open("phones.txt", "w", encoding="utf-8") as file:
+    file.write(updated_text)
+
+print("File successfully created and written to 'phones.txt'")

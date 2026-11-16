@@ -5,6 +5,6 @@ Deploy: push to `main`, then in cPanel > Git Version Control > Manage > Update f
 SEO: see SEO-NOTES.md. `seo.js` sets per-product/per-article meta + JSON-LD, `sitemap.php` serves /sitemap.xml, `robots.txt` is in the root.
 
 Accounts + reviews + admin lock: run `supabase-customers-reviews.sql` once in the Supabase SQL Editor (not deployed to cPanel). Admin emails live in that file (`is_admin()`) and in admin.html (`ADMIN_EMAILS`).
-Black November sale: `promo.js` (edit PCT and END at the top). It marks every phone down and shows the home-page countdown popup; it switches itself off after END.
+Sales: none running. The Black November sale (promo.js) ended and was removed. Prices come straight from the Supabase `products` table (set `old` only when you really want a crossed-out price).
 Cookie notice: `cookies.js` (consent stored in the dai_consent cookie). Email-confirmation return: add https://www.daisolvetechnologies.co.ke/** under Supabase > Authentication > URL Configuration > Redirect URLs.
 Orders + subscribers in the database: run `supabase-orders.sql` once (after supabase-customers-reviews.sql). Admin reads them from there, so every admin sees the same data.
